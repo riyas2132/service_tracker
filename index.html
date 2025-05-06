@@ -4,310 +4,606 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service Tracking System</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --blue-50: #eef5ff;
+            --blue-100: #d9e8ff;
+            --blue-500: #3a86ff;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --indigo-600: #5525da;
+            --indigo-700: #471dba;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-500: #adb5bd;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --green-100: #dcfce7;
+            --green-800: #166534;
+            --yellow-100: #fef9c3;
+            --yellow-800: #854d0e;
+            --orange-100: #ffedd5;
+            --orange-800: #9a3412;
+            --red-100: #fee2e2;
+            --red-800: #991b1b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
         body {
-            background-color: #f8f9fa;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--blue-50), #f0f1ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            color: var(--gray-800);
         }
-        .tracking-container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+
+        .container {
+            width: 100%;
+            max-width: 64rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-        .tracking-header {
+
+        .header {
+            background: linear-gradient(to right, var(--blue-600), var(--indigo-600));
+            padding: 2rem;
             text-align: center;
-            margin-bottom: 30px;
+            color: white;
         }
-        .progress {
-            height: 25px;
-            margin: 30px 0;
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
         }
-        .tracking-history {
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .search-container {
             position: relative;
-            margin-top: 40px;
         }
-        .tracking-history:before {
-            content: '';
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            padding-right: 8rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: var(--gray-50);
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--blue-500);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-button {
             position: absolute;
-            left: 15px;
-            top: 0;
-            height: 100%;
-            width: 2px;
-            background-color: #dee2e6;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--blue-600);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.2s;
         }
-        .tracking-step {
-            position: relative;
-            padding-left: 45px;
-            margin-bottom: 20px;
+
+        .search-button:hover {
+            background: var(--blue-700);
         }
-        .tracking-step:before {
-            content: '';
-            position: absolute;
-            left: 8px;
-            top: 5px;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: #6c757d;
-            z-index: 1;
+
+        .search-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
-        .tracking-step.completed:before {
-            background-color: #198754;
-        }
-        .tracking-step-content {
-            padding: 10px 15px;
-            background-color: #f1f3f5;
-            border-radius: 5px;
-        }
-        .customer-details, .item-details {
-            padding: 15px;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .hide-section {
-            display: none;
-        }
+
         .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
+            display: none;
+            margin: 2rem auto;
+            width: 3rem;
+            height: 3rem;
+            border: 3px solid var(--blue-100);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 2s linear infinite;
-            margin: 20px auto;
+            border-top-color: var(--blue-500);
+            animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--red-100);
+            border-radius: 0.5rem;
+            color: var(--red-800);
+        }
+
+        .tracking-result {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .tracking-number {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-delivered { background: var(--green-100); color: var(--green-800); }
+        .status-transit { background: var(--blue-100); color: var(--blue-700); }
+        .status-processing { background: var(--yellow-100); color: var(--yellow-800); }
+        .status-pending { background: var(--orange-100); color: var(--orange-800); }
+        .status-cancelled { background: var(--red-100); color: var(--red-800); }
+
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            height: 0.5rem;
+            background: var(--gray-100);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--blue-500);
+            border-radius: 9999px;
+            transition: width 1s ease-out;
+        }
+
+        .progress-text {
+            text-align: right;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .details-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .details-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+        }
+
+        .details-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .details-row {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .details-icon {
+            width: 2rem;
+            height: 2rem;
+            background: var(--blue-50);
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-600);
+        }
+
+        .details-content {
+            flex: 1;
+        }
+
+        .details-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: 0.25rem;
+        }
+
+        .details-value {
+            font-weight: 500;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.875rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gray-200);
+        }
+
+        .timeline-step {
+            position: relative;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -2rem;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            background: white;
+            border: 2px solid var(--blue-500);
+            border-radius: 50%;
+        }
+
+        .timeline-content {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-status {
+            font-weight: 600;
+        }
+
+        .timeline-date {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .timeline-remarks {
+            color: var(--gray-700);
         }
     </style>
 </head>
 <body>
-    <div class="container tracking-container">
-        <div class="tracking-header">
-            <h2>Service Tracking System</h2>
-            <p class="text-muted">Enter your tracking number to get service details</p>
+    <div class="container">
+        <div class="header">
+            <h1>Service Tracking System</h1>
+            <p>Enter your tracking number to get real-time service details</p>
         </div>
         
-        <div class="search-section">
-            <div class="input-group mb-3">
-                <input type="text" id="trackingInput" class="form-control" placeholder="Enter Tracking Number" aria-label="Tracking Number">
-                <button class="btn btn-primary" type="button" id="trackButton">Track</button>
+        <div class="content">
+            <div class="search-container">
+                <input type="text" id="trackingInput" class="search-input" placeholder="Enter tracking number">
+                <button id="trackButton" class="search-button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Track
+                </button>
             </div>
-        </div>
-        
-        <div id="loader" class="loader hide-section"></div>
-        <div id="errorMessage" class="alert alert-danger hide-section"></div>
-        
-        <div id="trackingResult" class="hide-section">
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Tracking #<span id="displayTrackingNumber"></span></h5>
-                    <span id="statusBadge" class="badge"></span>
+
+            <div id="loader" class="loader"></div>
+            <div id="errorMessage" class="error-message"></div>
+            
+            <div id="trackingResult" class="tracking-result">
+                <div class="status-header">
+                    <h2 class="tracking-number">Tracking #<span id="displayTrackingNumber"></span></h2>
+                    <span id="statusBadge" class="status-badge"></span>
                 </div>
-                <div class="card-body">
-                    <h6>Service Progress</h6>
-                    <div class="progress">
-                        <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progressBar" class="progress-fill" style="width: 0%"></div>
                     </div>
-                    <p class="text-end"><span id="percentComplete"></span>% Complete</p>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <div class="customer-details">
-                                <h6>Customer Details</h6>
-                                <hr>
-                                <p><strong>Name:</strong> <span id="customerName"></span></p>
-                                <p><strong>Email:</strong> <span id="customerEmail"></span></p>
-                                <p><strong>Phone:</strong> <span id="customerPhone"></span></p>
-                                <p><strong>Address:</strong> <span id="customerAddress"></span></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="item-details">
-                                <h6>Details</h6>
-                                <hr>
-                                <p><strong>Service:</strong> <span id="itemDescription"></span></p>
-								<p><strong>Description:</strong> <span id="itemDetailDescription"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <h6 class="mt-4">Tracking History</h6>
-                    <div id="trackingHistory" class="tracking-history"></div>
+                    <div class="progress-text"><span id="percentComplete">0</span>% Complete</div>
                 </div>
+
+                <div class="details-grid">
+                    <div class="details-card">
+                        <h3>Customer Details</h3>
+                        <div id="customerDetails"></div>
+                    </div>
+                    <div class="details-card">
+                        <h3>Service Details</h3>
+                        <div id="serviceDetails"></div>
+                    </div>
+                </div>
+
+                <h3 class="details-card-title">Tracking History</h3>
+                <div id="trackingHistory" class="timeline"></div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Google Sheets API -->
     <script src="https://apis.google.com/js/api.js"></script>
-    <!-- Custom JavaScript -->
-<script>
-    const API_KEY = 'AIzaSyByyiuwuJBysKl2xtvl6wCw6Gz9shyDzXs';
-    const SHEET_ID = '1lKVyHbfdfPTfEUJbt870PtZZJ3rZxULl3VAf6I_9eIk';
-    const SHEET_RANGE = 'Tracker!A:AL';
+    <script>
+        const API_KEY = 'AIzaSyByyiuwuJBysKl2xtvl6wCw6Gz9shyDzXs';
+        const SHEET_ID = '1lKVyHbfdfPTfEUJbt870PtZZJ3rZxULl3VAf6I_9eIk';
+        const SHEET_RANGE = 'Tracker!A:AL';
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const trackingInput = document.getElementById('trackingInput');
-        const trackButton = document.getElementById('trackButton');
-        const loader = document.getElementById('loader');
-        const errorMessage = document.getElementById('errorMessage');
-        const trackingResult = document.getElementById('trackingResult');
-        
-        gapi.load('client', initClient);
+        document.addEventListener('DOMContentLoaded', function() {
+            const trackingInput = document.getElementById('trackingInput');
+            const trackButton = document.getElementById('trackButton');
+            const loader = document.getElementById('loader');
+            const errorMessage = document.getElementById('errorMessage');
+            const trackingResult = document.getElementById('trackingResult');
 
-        function initClient() {
-            gapi.client.init({
-                'apiKey': API_KEY,
-                'discoveryDocs': ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-            }).then(() => {
-                console.log('Google Sheets API initialized');
-                // Check for tracking number in URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const trackingNumber = urlParams.get('tracking');
-                if (trackingNumber) {
-                    trackingInput.value = trackingNumber;
-                    trackPackage(); // Auto-trigger search
-                }
-            }, (error) => {
-                console.error('Error initializing Google Sheets API:', error);
-            });
-        }
+            gapi.load('client', initClient);
 
-        trackButton.addEventListener('click', trackPackage);
-        trackingInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                trackPackage();
-            }
-        });
-
-        async function trackPackage() {
-            const trackingNumber = trackingInput.value.trim();
-
-            if (!trackingNumber) {
-                showError('Please enter a tracking number');
-                return;
-            }
-
-            loader.classList.remove('hide-section');
-            errorMessage.classList.add('hide-section');
-            trackingResult.classList.add('hide-section');
-            
-            try {
-                const response = await gapi.client.sheets.spreadsheets.values.get({
-                    spreadsheetId: SHEET_ID,
-                    range: SHEET_RANGE,
+            function initClient() {
+                gapi.client.init({
+                    'apiKey': API_KEY,
+                    'discoveryDocs': ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+                }).then(() => {
+                    console.log('Google Sheets API initialized');
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const trackingNumber = urlParams.get('tracking');
+                    if (trackingNumber) {
+                        trackingInput.value = trackingNumber;
+                        trackPackage();
+                    }
+                }).catch((error) => {
+                    console.error('Error initializing Google Sheets API:', error);
+                    showError('Failed to initialize tracking system');
                 });
+            }
 
-                const data = response.result.values;
-                const trackingData = data.slice(1).find(row => row[0] === trackingNumber);
+            trackButton.addEventListener('click', trackPackage);
+            trackingInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    trackPackage();
+                }
+            });
 
-                if (!trackingData) {
-                    showError('Tracking number not found. Please check and try again.');
+            async function trackPackage() {
+                const trackingNumber = trackingInput.value.trim();
+
+                if (!trackingNumber) {
+                    showError('Please enter a tracking number');
                     return;
                 }
 
-                const trackingInfo = {
-                    status: getLastStatus(trackingData),
-                    percentComplete: parseInt(trackingData[37]),
-                    customerDetails: {
-                        name: trackingData[1],
-                        email: trackingData[2],
-                        phone: trackingData[3],
-                        address: trackingData[4],
-                    },
-                    itemDetails: {
-                        description: trackingData[5],
-                        detailDescription: trackingData[6],
-                    },
-                    trackingHistory: [
-                        { date: trackingData[8], status: trackingData[7], remarks: trackingData[9] },
-                        { date: trackingData[11], status: trackingData[10], remarks: trackingData[12] },
-                        { date: trackingData[14], status: trackingData[13], remarks: trackingData[15] },
-                        { date: trackingData[17], status: trackingData[16], remarks: trackingData[18] },
-                        { date: trackingData[20], status: trackingData[19], remarks: trackingData[21] },
-                        { date: trackingData[23], status: trackingData[22], remarks: trackingData[24] },
-                        { date: trackingData[26], status: trackingData[25], remarks: trackingData[27] },
-                        { date: trackingData[29], status: trackingData[28], remarks: trackingData[30] },
-                        { date: trackingData[32], status: trackingData[31], remarks: trackingData[33] },
-                        { date: trackingData[35], status: trackingData[34], remarks: trackingData[36] }
-                    ].filter(step => step.date),
-                };
+                showLoader(true);
+                hideError();
+                hideTrackingResult();
 
-                displayTrackingResult(trackingNumber, trackingInfo);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                showError('An error occurred while fetching tracking data.');
-            } finally {
-                loader.classList.add('hide-section');
-            }
-        }
+                try {
+                    const response = await gapi.client.sheets.spreadsheets.values.get({
+                        spreadsheetId: SHEET_ID,
+                        range: SHEET_RANGE,
+                    });
 
-        function getLastStatus(trackingData) {
-            const statusColumns = [7, 10, 13, 16, 19, 22, 25, 28, 31, 34];
-            for (let i = statusColumns.length - 1; i >= 0; i--) {
-                if (trackingData[statusColumns[i]]) {
-                    return trackingData[statusColumns[i]];
+                    const data = response.result.values;
+                    const trackingData = data.slice(1).find(row => row[0] === trackingNumber);
+
+                    if (!trackingData) {
+                        showError('Tracking number not found. Please check and try again.');
+                        return;
+                    }
+
+                    const trackingInfo = {
+                        status: getLastStatus(trackingData),
+                        percentComplete: parseInt(trackingData[37]) || 0,
+                        customerDetails: {
+                            name: trackingData[1] || '',
+                            email: trackingData[2] || '',
+                            phone: trackingData[3] || '',
+                            address: trackingData[4] || '',
+                        },
+                        itemDetails: {
+                            description: trackingData[5] || '',
+                            detailDescription: trackingData[6] || '',
+                        },
+                        trackingHistory: [
+                            { date: trackingData[8], status: trackingData[7], remarks: trackingData[9] },
+                            { date: trackingData[11], status: trackingData[10], remarks: trackingData[12] },
+                            { date: trackingData[14], status: trackingData[13], remarks: trackingData[15] },
+                            { date: trackingData[17], status: trackingData[16], remarks: trackingData[18] },
+                            { date: trackingData[20], status: trackingData[19], remarks: trackingData[21] },
+                            { date: trackingData[23], status: trackingData[22], remarks: trackingData[24] },
+                            { date: trackingData[26], status: trackingData[25], remarks: trackingData[27] },
+                            { date: trackingData[29], status: trackingData[28], remarks: trackingData[30] },
+                            { date: trackingData[32], status: trackingData[31], remarks: trackingData[33] },
+                            { date: trackingData[35], status: trackingData[34], remarks: trackingData[36] }
+                        ].filter(step => step.date && step.status),
+                    };
+
+                    displayTrackingResult(trackingNumber, trackingInfo);
+                    updateURL(trackingNumber);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    showError('An error occurred while fetching tracking data.');
+                } finally {
+                    showLoader(false);
                 }
             }
-            return 'No Status Found';
-        }
 
-        function displayTrackingResult(trackingNumber, data) {
-            document.getElementById('displayTrackingNumber').textContent = trackingNumber;
-            const statusBadge = document.getElementById('statusBadge');
-            statusBadge.textContent = data.status;
-            statusBadge.className = 'badge';
-
-            if (data.status === 'Delivered') {
-                statusBadge.classList.add('bg-success');
-            } else if (data.status === 'In Transit') {
-                statusBadge.classList.add('bg-info');
-            } else {
-                statusBadge.classList.add('bg-warning');
+            function getLastStatus(trackingData) {
+                const statusColumns = [7, 10, 13, 16, 19, 22, 25, 28, 31, 34];
+                for (let i = statusColumns.length - 1; i >= 0; i--) {
+                    if (trackingData[statusColumns[i]]) {
+                        return trackingData[statusColumns[i]];
+                    }
+                }
+                return 'No Status Found';
             }
 
-            document.getElementById('progressBar').style.width = data.percentComplete + '%';
-            document.getElementById('percentComplete').textContent = data.percentComplete;
-            document.getElementById('customerName').textContent = data.customerDetails.name;
-            document.getElementById('customerEmail').textContent = data.customerDetails.email;
-            document.getElementById('customerPhone').textContent = data.customerDetails.phone;
-            document.getElementById('customerAddress').textContent = data.customerDetails.address;
-            document.getElementById('itemDescription').textContent = data.itemDetails.description;
-            document.getElementById('itemDetailDescription').textContent = data.itemDetails.detailDescription;
+            function displayTrackingResult(trackingNumber, data) {
+                document.getElementById('displayTrackingNumber').textContent = trackingNumber;
+                
+                const statusBadge = document.getElementById('statusBadge');
+                statusBadge.textContent = data.status;
+                statusBadge.className = 'status-badge ' + getStatusClass(data.status);
 
-            const trackingHistoryContainer = document.getElementById('trackingHistory');
-            trackingHistoryContainer.innerHTML = '';
-            data.trackingHistory.forEach((step) => {
-                trackingHistoryContainer.innerHTML += `
-                    <div class="tracking-step completed">
-                        <div class="tracking-step-content">
-                            <div class="d-flex justify-content-between">
-                                <strong>${step.status}</strong>
-                                <span class="text-muted">${step.date}</span>
-                            </div>
-                            <div>${step.remarks}</div>
+                document.getElementById('progressBar').style.width = `${data.percentComplete}%`;
+                document.getElementById('percentComplete').textContent = data.percentComplete;
+
+                displayCustomerDetails(data.customerDetails);
+                displayServiceDetails(data.itemDetails);
+                displayTrackingHistory(data.trackingHistory);
+
+                showTrackingResult();
+            }
+
+            function displayCustomerDetails(details) {
+                const icons = {
+                    name: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
+                    email: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>',
+                    phone: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>',
+                    address: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>'
+                };
+
+                const container = document.getElementById('customerDetails');
+                container.innerHTML = Object.entries(details).map(([key, value]) => `
+                    <div class="details-row">
+                        <div class="details-icon">${icons[key]}</div>
+                        <div class="details-content">
+                            <div class="details-label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
+                            <div class="details-value">${value}</div>
                         </div>
-                    </div>`;
-            });
+                    </div>
+                `).join('');
+            }
 
-            trackingResult.classList.remove('hide-section');
-        }
+            function displayServiceDetails(details) {
+                const icons = {
+                    description: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>',
+                    detailDescription: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>'
+                };
 
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.remove('hide-section');
-        }
-    });
-</script>
+                const container = document.getElementById('serviceDetails');
+                container.innerHTML = Object.entries(details).map(([key, value]) => `
+                    <div class="details-row">
+                        <div class="details-icon">${icons[key]}</div>
+                        <div class="details-content">
+                            <div class="details-label">${key === 'description' ? 'Service Type' : 'Description'}</div>
+                            <div class="details-value">${value}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function displayTrackingHistory(history) {
+                const container = document.getElementById('trackingHistory');
+                container.innerHTML = history.map((step, index) => `
+                    <div class="timeline-step" style="animation-delay: ${index * 0.1}s">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <span class="timeline-status">${step.status}</span>
+                                <span class="timeline-date">${step.date}</span>
+                            </div>
+                            ${step.remarks ? `<div class="timeline-remarks">${step.remarks}</div>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function getStatusClass(status) {
+                const statusLower = status.toLowerCase();
+                if (statusLower.includes('delivered')) return 'status-delivered';
+                if (statusLower.includes('transit')) return 'status-transit';
+                if (statusLower.includes('processing')) return 'status-processing';
+                if (statusLower.includes('pending')) return 'status-pending';
+                if (statusLower.includes('cancelled')) return 'status-cancelled';
+                return '';
+            }
+
+            function showLoader(show) {
+                loader.style.display = show ? 'block' : 'none';
+                trackButton.disabled = show;
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+            }
+
+            function hideError() {
+                errorMessage.style.display = 'none';
+            }
+
+            function showTrackingResult() {
+                trackingResult.style.display = 'block';
+            }
+
+            function hideTrackingResult() {
+                trackingResult.style.display = 'none';
+            }
+
+            function updateURL(trackingNumber) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('tracking', trackingNumber);
+                window.history.pushState({}, '', url);
+            }
+        });
+    </script>
 </body>
 </html>
