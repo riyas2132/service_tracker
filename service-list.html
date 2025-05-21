@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Tracking System</title>
+    <title>Service Tracking List</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,12 +23,16 @@
             --gray-700: #495057;
             --gray-800: #343a40;
             --green-100: #dcfce7;
+            --green-500: #22c55e;
             --green-800: #166534;
             --yellow-100: #fef9c3;
+            --yellow-500: #eab308;
             --yellow-800: #854d0e;
             --orange-100: #ffedd5;
+            --orange-500: #f97316;
             --orange-800: #9a3412;
             --red-100: #fee2e2;
+            --red-500: #ef4444;
             --red-800: #991b1b;
         }
 
@@ -80,14 +83,24 @@
             padding: 2rem;
         }
 
+        .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
         .search-container {
             position: relative;
+            flex-grow: 1;
+            max-width: 30rem;
         }
 
         .search-input {
             width: 100%;
-            padding: 0.875rem 1rem;
-            padding-right: 8rem;
+            padding: 0.75rem 1rem;
+            padding-left: 2.5rem;
             border: 1px solid var(--gray-200);
             border-radius: 0.5rem;
             font-size: 1rem;
@@ -102,31 +115,39 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        .search-button {
+        .search-icon {
             position: absolute;
-            right: 0.5rem;
+            left: 0.75rem;
             top: 50%;
             transform: translateY(-50%);
-            background: var(--blue-600);
-            color: white;
-            border: none;
+            color: var(--gray-500);
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .status-filter {
             padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            background: white;
+            font-size: 0.875rem;
             font-weight: 500;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
+            color: var(--gray-700);
         }
 
-        .search-button:hover {
-            background: var(--blue-700);
+        .status-filter:hover {
+            border-color: var(--blue-500);
         }
 
-        .search-button:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
+        .status-filter.active {
+            background: var(--blue-500);
+            border-color: var(--blue-500);
+            color: white;
         }
 
         .loader {
@@ -146,34 +167,54 @@
 
         .error-message {
             display: none;
-            margin-top: 1rem;
+            margin: 1rem 0;
             padding: 1rem;
             background: var(--red-100);
             border-radius: 0.5rem;
             color: var(--red-800);
         }
 
-        .tracking-result {
-            display: none;
-            margin-top: 1.5rem;
+        .tracking-list {
+            display: grid;
+            gap: 1rem;
         }
 
-        .status-header {
+        .tracking-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .tracking-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .tracking-number {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 600;
         }
 
         .status-badge {
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
         }
 
@@ -183,12 +224,43 @@
         .status-pending { background: var(--orange-100); color: var(--orange-800); }
         .status-cancelled { background: var(--red-100); color: var(--red-800); }
 
+        .card-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem 2rem;
+        }
+
+        .card-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .card-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .card-value {
+            font-weight: 500;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-100);
+        }
+
         .progress-container {
-            margin-bottom: 2rem;
+            flex-grow: 1;
+            margin-right: 1rem;
         }
 
         .progress-bar {
-            height: 0.5rem;
+            height: 0.375rem;
             background: var(--gray-100);
             border-radius: 9999px;
             overflow: hidden;
@@ -198,188 +270,154 @@
             height: 100%;
             background: var(--blue-500);
             border-radius: 9999px;
-            transition: width 1s ease-out;
         }
 
         .progress-text {
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--gray-500);
             text-align: right;
-            margin-top: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--gray-700);
         }
 
-        .details-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (min-width: 768px) {
-            .details-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .details-card {
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-        }
-
-        .details-card h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--gray-100);
-        }
-
-        .details-row {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .details-icon {
-            width: 2rem;
-            height: 2rem;
-            background: var(--blue-50);
+        .view-button {
+            padding: 0.5rem 1rem;
+            border: none;
             border-radius: 0.375rem;
+            background: var(--blue-600);
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: var(--blue-600);
+            gap: 0.5rem;
         }
 
-        .details-content {
-            flex: 1;
+        .view-button:hover {
+            background: var(--blue-700);
         }
 
-        .details-label {
-            font-size: 0.875rem;
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .empty-icon {
+            margin-bottom: 1rem;
             color: var(--gray-500);
-            margin-bottom: 0.25rem;
         }
 
-        .details-value {
-            font-weight: 500;
-        }
-
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0.875rem;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--gray-200);
-        }
-
-        .timeline-step {
-            position: relative;
-            margin-bottom: 1.5rem;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: -2rem;
-            top: 0.5rem;
-            width: 1rem;
-            height: 1rem;
-            background: white;
-            border: 2px solid var(--blue-500);
-            border-radius: 50%;
-        }
-
-        .timeline-content {
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 0.5rem;
-            padding: 1rem;
-        }
-
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
 
-        .timeline-status {
-            font-weight: 600;
+        .empty-message {
+            color: var(--gray-700);
+            margin-bottom: 1.5rem;
         }
 
-        .timeline-date {
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .page-button {
+            min-width: 2.5rem;
+            height: 2.5rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.375rem;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-button:hover {
+            border-color: var(--blue-500);
+            color: var(--blue-600);
+        }
+
+        .page-button.active {
+            background: var(--blue-500);
+            border-color: var(--blue-500);
+            color: white;
+        }
+
+        .page-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-dots {
+            display: flex;
+            align-items: center;
             font-size: 0.875rem;
             color: var(--gray-500);
         }
 
-        .timeline-remarks {
-            color: var(--gray-700);
+        @media (max-width: 768px) {
+            .card-content {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Service Tracking System</h1>
-            <p>Enter your tracking number to get real-time service details</p>
+            <h1>Service Tracking List</h1>
+            <p>View and manage all service tracking records</p>
         </div>
         
         <div class="content">
-            <div class="search-container">
-                <input type="text" id="trackingInput" class="search-input" placeholder="Enter tracking number">
-                <button id="trackButton" class="search-button">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    Track
-                </button>
+            <div class="actions-bar">
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search by tracking number, name or email...">
+                    <div class="search-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </div>
+                </div>
+                <div class="filter-container">
+                    <button class="status-filter active" data-status="all">All</button>
+                    <button class="status-filter" data-status="delivered">Delivered</button>
+                    <button class="status-filter" data-status="transit">In Transit</button>
+                    <button class="status-filter" data-status="processing">Processing</button>
+                    <button class="status-filter" data-status="pending">Pending</button>
+                </div>
             </div>
 
             <div id="loader" class="loader"></div>
             <div id="errorMessage" class="error-message"></div>
             
-            <div id="trackingResult" class="tracking-result">
-                <div class="status-header">
-                    <h2 class="tracking-number">Tracking #<span id="displayTrackingNumber"></span></h2>
-                    <span id="statusBadge" class="status-badge"></span>
-                </div>
+            <div id="trackingList" class="tracking-list"></div>
 
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div id="progressBar" class="progress-fill" style="width: 0%"></div>
-                    </div>
-                    <div class="progress-text"><span id="percentComplete">0</span>% Complete</div>
+            <div id="emptyState" class="empty-state">
+                <div class="empty-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
                 </div>
-
-                <div class="details-grid">
-                    <div class="details-card">
-                        <h3>Customer Details</h3>
-                        <div id="customerDetails"></div>
-                    </div>
-                    <div class="details-card">
-                        <h3>Service Details</h3>
-                        <div id="serviceDetails"></div>
-                    </div>
-                </div>
-
-                <h3 class="details-card-title">Tracking History</h3>
-                <div id="trackingHistory" class="timeline"></div>
+                <h3 class="empty-title">No Results Found</h3>
+                <p class="empty-message">Try adjusting your search or filter to find what you're looking for.</p>
+                <button id="resetFiltersButton" class="view-button">Reset Filters</button>
             </div>
+
+            <div id="pagination" class="pagination"></div>
         </div>
     </div>
 
@@ -388,185 +426,325 @@
         const API_KEY = 'AIzaSyByyiuwuJBysKl2xtvl6wCw6Gz9shyDzXs';
         const SHEET_ID = '1lKVyHbfdfPTfEUJbt870PtZZJ3rZxULl3VAf6I_9eIk';
         const SHEET_RANGE = 'Tracker!A:AL';
-
+        
+        // Pagination settings
+        const ITEMS_PER_PAGE = 10;
+        
         document.addEventListener('DOMContentLoaded', function() {
-            const trackingInput = document.getElementById('trackingInput');
-            const trackButton = document.getElementById('trackButton');
+            const searchInput = document.getElementById('searchInput');
+            const statusFilters = document.querySelectorAll('.status-filter');
             const loader = document.getElementById('loader');
             const errorMessage = document.getElementById('errorMessage');
-            const trackingResult = document.getElementById('trackingResult');
-
+            const trackingList = document.getElementById('trackingList');
+            const emptyState = document.getElementById('emptyState');
+            const resetFiltersButton = document.getElementById('resetFiltersButton');
+            const pagination = document.getElementById('pagination');
+            
+            // Store all tracking data
+            let allTrackingData = [];
+            let filteredData = [];
+            let currentPage = 1;
+            let activeStatus = 'all';
+            let searchQuery = '';
+            
             gapi.load('client', initClient);
-
+            
             function initClient() {
                 gapi.client.init({
                     'apiKey': API_KEY,
                     'discoveryDocs': ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
                 }).then(() => {
                     console.log('Google Sheets API initialized');
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const trackingNumber = urlParams.get('tracking');
-                    if (trackingNumber) {
-                        trackingInput.value = trackingNumber;
-                        trackPackage();
-                    }
+                    fetchTrackingData();
                 }).catch((error) => {
                     console.error('Error initializing Google Sheets API:', error);
                     showError('Failed to initialize tracking system');
                 });
             }
-
-            trackButton.addEventListener('click', trackPackage);
-            trackingInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    trackPackage();
-                }
-            });
-
-            async function trackPackage() {
-                const trackingNumber = trackingInput.value.trim();
-
-                if (!trackingNumber) {
-                    showError('Please enter a tracking number');
-                    return;
-                }
-
+            
+            async function fetchTrackingData() {
                 showLoader(true);
                 hideError();
-                hideTrackingResult();
-
+                
                 try {
                     const response = await gapi.client.sheets.spreadsheets.values.get({
                         spreadsheetId: SHEET_ID,
                         range: SHEET_RANGE,
                     });
-
+                    
                     const data = response.result.values;
-                    const trackingData = data.slice(1).find(row => row[0] === trackingNumber);
-
-                    if (!trackingData) {
-                        showError('Tracking number not found. Please check and try again.');
-                        return;
+                    if (data && data.length > 1) {
+                        // Skip header row
+                        allTrackingData = data.slice(1).map(row => ({
+                            trackingNumber: row[0] || '',
+                            name: row[1] || '',
+                            email: row[2] || '',
+                            phone: row[3] || '',
+                            address: row[4] || '',
+                            serviceType: row[5] || '',
+                            description: row[6] || '',
+                            status: getLastStatus(row),
+                            lastUpdate: getLastDate(row),
+                            percentComplete: parseInt(row[37]) || 0,
+                        }));
+                        
+                        // Initial display with all data
+                        filteredData = [...allTrackingData];
+                        displayTrackingList();
+                    } else {
+                        showEmptyState(true);
                     }
-
-                    const trackingInfo = {
-                        status: getLastStatus(trackingData),
-                        percentComplete: parseInt(trackingData[37]) || 0,
-                        customerDetails: {
-                            name: trackingData[1] || '',
-                            email: trackingData[2] || '',
-                            phone: trackingData[3] || '',
-                            address: trackingData[4] || '',
-                        },
-                        itemDetails: {
-                            description: trackingData[5] || '',
-                            detailDescription: trackingData[6] || '',
-                        },
-                        trackingHistory: [
-                            { date: trackingData[8], status: trackingData[7], remarks: trackingData[9] },
-                            { date: trackingData[11], status: trackingData[10], remarks: trackingData[12] },
-                            { date: trackingData[14], status: trackingData[13], remarks: trackingData[15] },
-                            { date: trackingData[17], status: trackingData[16], remarks: trackingData[18] },
-                            { date: trackingData[20], status: trackingData[19], remarks: trackingData[21] },
-                            { date: trackingData[23], status: trackingData[22], remarks: trackingData[24] },
-                            { date: trackingData[26], status: trackingData[25], remarks: trackingData[27] },
-                            { date: trackingData[29], status: trackingData[28], remarks: trackingData[30] },
-                            { date: trackingData[32], status: trackingData[31], remarks: trackingData[33] },
-                            { date: trackingData[35], status: trackingData[34], remarks: trackingData[36] }
-                        ].filter(step => step.date && step.status),
-                    };
-
-                    displayTrackingResult(trackingNumber, trackingInfo);
-                    updateURL(trackingNumber);
                 } catch (error) {
                     console.error('Error fetching data:', error);
-                    showError('An error occurred while fetching tracking data.');
+                    showError('An error occurred while loading tracking data.');
                 } finally {
                     showLoader(false);
                 }
             }
-
-            function getLastStatus(trackingData) {
+            
+            function getLastStatus(row) {
                 const statusColumns = [7, 10, 13, 16, 19, 22, 25, 28, 31, 34];
                 for (let i = statusColumns.length - 1; i >= 0; i--) {
-                    if (trackingData[statusColumns[i]]) {
-                        return trackingData[statusColumns[i]];
+                    if (row[statusColumns[i]]) {
+                        return row[statusColumns[i]];
                     }
                 }
-                return 'No Status Found';
+                return 'No Status';
             }
-
-            function displayTrackingResult(trackingNumber, data) {
-                document.getElementById('displayTrackingNumber').textContent = trackingNumber;
+            
+            function getLastDate(row) {
+                const dateColumns = [8, 11, 14, 17, 20, 23, 26, 29, 32, 35];
+                for (let i = dateColumns.length - 1; i >= 0; i--) {
+                    if (row[dateColumns[i]]) {
+                        return row[dateColumns[i]];
+                    }
+                }
+                return '';
+            }
+            
+            function displayTrackingList() {
+                // Calculate pagination
+                const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+                const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+                const endIndex = startIndex + ITEMS_PER_PAGE;
+                const currentPageData = filteredData.slice(startIndex, endIndex);
                 
-                const statusBadge = document.getElementById('statusBadge');
-                statusBadge.textContent = data.status;
-                statusBadge.className = 'status-badge ' + getStatusClass(data.status);
-
-                document.getElementById('progressBar').style.width = `${data.percentComplete}%`;
-                document.getElementById('percentComplete').textContent = data.percentComplete;
-
-                displayCustomerDetails(data.customerDetails);
-                displayServiceDetails(data.itemDetails);
-                displayTrackingHistory(data.trackingHistory);
-
-                showTrackingResult();
-            }
-
-            function displayCustomerDetails(details) {
-                const icons = {
-                    name: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
-                    email: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>',
-                    phone: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>',
-                    address: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>'
-                };
-
-                const container = document.getElementById('customerDetails');
-                container.innerHTML = Object.entries(details).map(([key, value]) => `
-                    <div class="details-row">
-                        <div class="details-icon">${icons[key]}</div>
-                        <div class="details-content">
-                            <div class="details-label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
-                            <div class="details-value">${value}</div>
+                if (currentPageData.length === 0) {
+                    showEmptyState(true);
+                    return;
+                }
+                
+                showEmptyState(false);
+                trackingList.innerHTML = '';
+                
+                currentPageData.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'tracking-card';
+                    card.setAttribute('data-tracking', item.trackingNumber);
+                    card.style.animationDelay = `${index * 0.05}s`;
+                    
+                    // Get status class
+                    const statusClass = getStatusClass(item.status);
+                    
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <h3 class="tracking-number">#${item.trackingNumber}</h3>
+                            <span class="status-badge ${statusClass}">${item.status}</span>
                         </div>
-                    </div>
-                `).join('');
-            }
-
-            function displayServiceDetails(details) {
-                const icons = {
-                    description: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>',
-                    detailDescription: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>'
-                };
-
-                const container = document.getElementById('serviceDetails');
-                container.innerHTML = Object.entries(details).map(([key, value]) => `
-                    <div class="details-row">
-                        <div class="details-icon">${icons[key]}</div>
-                        <div class="details-content">
-                            <div class="details-label">${key === 'description' ? 'Service Type' : 'Description'}</div>
-                            <div class="details-value">${value}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            function displayTrackingHistory(history) {
-                const container = document.getElementById('trackingHistory');
-                container.innerHTML = history.map((step, index) => `
-                    <div class="timeline-step" style="animation-delay: ${index * 0.1}s">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-content">
-                            <div class="timeline-header">
-                                <span class="timeline-status">${step.status}</span>
-                                <span class="timeline-date">${step.date}</span>
+                        <div class="card-content">
+                            <div class="card-field">
+                                <span class="card-label">Customer</span>
+                                <span class="card-value">${item.name}</span>
                             </div>
-                            ${step.remarks ? `<div class="timeline-remarks">${step.remarks}</div>` : ''}
+                            <div class="card-field">
+                                <span class="card-label">Service Type</span>
+                                <span class="card-value">${item.serviceType}</span>
+                            </div>
+                            <div class="card-field">
+                                <span class="card-label">Contact</span>
+                                <span class="card-value">${item.email || item.phone}</span>
+                            </div>
+                            <div class="card-field">
+                                <span class="card-label">Last Update</span>
+                                <span class="card-value">${item.lastUpdate || 'N/A'}</span>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
+                        <div class="card-footer">
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${item.percentComplete}%"></div>
+                                </div>
+                                <div class="progress-text">${item.percentComplete}% Complete</div>
+                            </div>
+                            <button class="view-button" data-tracking="${item.trackingNumber}">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                View Details
+                            </button>
+                        </div>
+                    `;
+                    
+                    trackingList.appendChild(card);
+                });
+                
+                // Add event listeners for cards and buttons
+                document.querySelectorAll('.tracking-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        if (!e.target.classList.contains('view-button')) {
+                            const trackingNumber = this.getAttribute('data-tracking');
+                            navigateToTrackingDetails(trackingNumber);
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.view-button').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const trackingNumber = this.getAttribute('data-tracking');
+                        navigateToTrackingDetails(trackingNumber);
+                    });
+                });
+                
+                // Update pagination
+                renderPagination(totalPages);
             }
-
+            
+            function navigateToTrackingDetails(trackingNumber) {
+                window.location.href = `index.html?tracking=${trackingNumber}`;
+            }
+            
+            function renderPagination(totalPages) {
+                if (totalPages <= 1) {
+                    pagination.style.display = 'none';
+                    return;
+                }
+                
+                pagination.style.display = 'flex';
+                pagination.innerHTML = '';
+                
+                // Previous button
+                const prevButton = document.createElement('button');
+                prevButton.className = 'page-button';
+                prevButton.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                `;
+                prevButton.disabled = currentPage === 1;
+                prevButton.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        displayTrackingList();
+                    }
+                });
+                pagination.appendChild(prevButton);
+                
+                // Page numbers
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+                
+                if (startPage > 1) {
+                    const firstPageBtn = document.createElement('button');
+                    firstPageBtn.className = 'page-button';
+                    firstPageBtn.textContent = '1';
+                    firstPageBtn.addEventListener('click', () => {
+                        currentPage = 1;
+                        displayTrackingList();
+                    });
+                    pagination.appendChild(firstPageBtn);
+                    
+                    if (startPage > 2) {
+                        const dotsElem = document.createElement('div');
+                        dotsElem.className = 'page-dots';
+                        dotsElem.textContent = '...';
+                        pagination.appendChild(dotsElem);
+                    }
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `page-button ${i === currentPage ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.addEventListener('click', () => {
+                        currentPage = i;
+                        displayTrackingList();
+                    });
+                    pagination.appendChild(pageBtn);
+                }
+                
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                        const dotsElem = document.createElement('div');
+                        dotsElem.className = 'page-dots';
+                        dotsElem.textContent = '...';
+                        pagination.appendChild(dotsElem);
+                    }
+                    
+                    const lastPageBtn = document.createElement('button');
+                    lastPageBtn.className = 'page-button';
+                    lastPageBtn.textContent = totalPages;
+                    lastPageBtn.addEventListener('click', () => {
+                        currentPage = totalPages;
+                        displayTrackingList();
+                    });
+                    pagination.appendChild(lastPageBtn);
+                }
+                
+                // Next button
+                const nextButton = document.createElement('button');
+                nextButton.className = 'page-button';
+                nextButton.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                `;
+                nextButton.disabled = currentPage === totalPages;
+                nextButton.addEventListener('click', () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        displayTrackingList();
+                    }
+                });
+                pagination.appendChild(nextButton);
+            }
+            
+            function filterData() {
+                currentPage = 1;
+                
+                filteredData = allTrackingData.filter(item => {
+                    // Filter by status
+                    if (activeStatus !== 'all') {
+                        const statusLower = item.status.toLowerCase();
+                        if (!statusLower.includes(activeStatus)) {
+                            return false;
+                        }
+                    }
+                    
+                    // Filter by search query
+                    if (searchQuery) {
+                        const query = searchQuery.toLowerCase();
+                        return (
+                            item.trackingNumber.toLowerCase().includes(query) ||
+                            item.name.toLowerCase().includes(query) ||
+                            item.email.toLowerCase().includes(query) ||
+                            item.phone.toLowerCase().includes(query) ||
+                            item.serviceType.toLowerCase().includes(query)
+                        );
+                    }
+                    
+                    return true;
+                });
+                
+                displayTrackingList();
+            }
+            
             function getStatusClass(status) {
                 const statusLower = status.toLowerCase();
                 if (statusLower.includes('delivered')) return 'status-delivered';
@@ -576,34 +754,62 @@
                 if (statusLower.includes('cancelled')) return 'status-cancelled';
                 return '';
             }
-
+            
             function showLoader(show) {
                 loader.style.display = show ? 'block' : 'none';
-                trackButton.disabled = show;
             }
-
+            
             function showError(message) {
                 errorMessage.textContent = message;
                 errorMessage.style.display = 'block';
             }
-
+            
             function hideError() {
                 errorMessage.style.display = 'none';
             }
-
-            function showTrackingResult() {
-                trackingResult.style.display = 'block';
+            
+            function showEmptyState(show) {
+                emptyState.style.display = show ? 'block' : 'none';
+                trackingList.style.display = show ? 'none' : 'grid';
             }
-
-            function hideTrackingResult() {
-                trackingResult.style.display = 'none';
-            }
-
-            function updateURL(trackingNumber) {
-                const url = new URL(window.location.href);
-                url.searchParams.set('tracking', trackingNumber);
-                window.history.pushState({}, '', url);
-            }
+            
+            // Event listeners
+            searchInput.addEventListener('input', function() {
+                searchQuery = this.value.trim();
+                filterData();
+            });
+            
+            statusFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    // Update active status
+                    activeStatus = this.getAttribute('data-status');
+                    
+                    // Update active class
+                    document.querySelectorAll('.status-filter').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    filterData();
+                });
+            });
+            
+            resetFiltersButton.addEventListener('click', function() {
+                // Reset filters
+                searchInput.value = '';
+                searchQuery = '';
+                activeStatus = 'all';
+                
+                // Reset active status button
+                document.querySelectorAll('.status-filter').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-status') === 'all') {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                filterData();
+            });
         });
     </script>
 </body>
