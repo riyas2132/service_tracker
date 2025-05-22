@@ -247,6 +247,11 @@
             color: var(--red-800);
         }
 
+        .error-message.success {
+            background: var(--green-100);
+            color: var(--green-800);
+        }
+
         @media (max-width: 768px) {
             .status-row-header,
             .status-row {
@@ -262,6 +267,15 @@
             .status-row-header > div:last-child,
             .status-row > *:last-child {
                 border-bottom: none;
+            }
+
+            .status-row > div::before {
+                content: attr(data-label);
+                display: block;
+                font-size: 0.75rem;
+                font-weight: 500;
+                color: var(--gray-700);
+                margin-bottom: 0.25rem;
             }
         }
     </style>
@@ -332,19 +346,17 @@
         const API_KEY = 'AIzaSyByyiuwuJBysKl2xtvl6wCw6Gz9shyDzXs';
         const SHEET_ID = '1lKVyHbfdfPTfEUJbt870PtZZJ3rZxULl3VAf6I_9eIk';
         const SHEET_RANGE = 'Tracker!A:AL';
-       const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBDWS3q8ZDVpbFNuMqvIWykOjtt4nEMmdf-Vg-oWS-18tgP6MpK-67LEHl1kp7ay8/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBDWS3q8ZDVpbFNuMqvIWykOjtt4nEMmdf-Vg-oWS-18tgP6MpK-67LEHl1kp7ay8/exec';
 
         document.addEventListener('DOMContentLoaded', function() {
-            const editForm = document.getElementById('editForm');
+            const editForm = document.getElementById('edit-form');
             const loader = document.getElementById('loader');
             const errorMessage = document.getElementById('errorMessage');
             const statusGrid = document.getElementById('statusGrid');
 
-  
-
             // Get tracking number from URL
             const urlParams = new URLSearchParams(window.location.search);
-            const trackingNumber = urlParams.get('tracking') || '10002' ;
+            const trackingNumber = urlParams.get('tracking') || '10002';
 
             if (!trackingNumber) {
                 showError('No tracking number provided.');
@@ -437,26 +449,32 @@
                     statusRow.className = 'status-row';
 
                     const statusCell = document.createElement('div');
+                    statusCell.dataset.label = 'Status';
                     const statusInput = document.createElement('input');
                     statusInput.type = 'text';
                     statusInput.className = 'form-input';
+                    statusInput.id = `status${index + 1}`;
                     statusInput.name = `status${index + 1}`;
                     statusInput.value = row[col.status] || '';
                     statusInput.placeholder = 'Enter status...';
                     statusCell.appendChild(statusInput);
 
                     const dateCell = document.createElement('div');
+                    dateCell.dataset.label = 'Date';
                     const dateInput = document.createElement('input');
                     dateInput.type = 'date';
                     dateInput.className = 'form-input';
+                    dateInput.id = `status${index + 1}Date`;
                     dateInput.name = `status${index + 1}Date`;
                     dateInput.value = row[col.date] ? formatDateForInput(row[col.date]) : '';
                     dateCell.appendChild(dateInput);
 
                     const remarksCell = document.createElement('div');
+                    remarksCell.dataset.label = 'Remarks';
                     const remarksInput = document.createElement('input');
                     remarksInput.type = 'text';
                     remarksInput.className = 'form-input';
+                    remarksInput.id = `status${index + 1}Remarks`;
                     remarksInput.name = `status${index + 1}Remarks`;
                     remarksInput.value = row[col.remarks] || '';
                     remarksInput.placeholder = 'Enter remarks...';
@@ -486,120 +504,90 @@
                 return `${day}-${month}-${year}`;
             }
 
-             
-
-            
-
             function showLoader(show) {
                 loader.style.display = show ? 'block' : 'none';
             }
 
             function showError(message) {
                 errorMessage.textContent = message;
+                errorMessage.className = 'error-message';
                 errorMessage.style.display = 'block';
             }
 
             function hideError() {
                 errorMessage.style.display = 'none';
             }
-        });
-		
-        // Handle form submission
-        document.getElementById('edit-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const statusDiv = document.getElementById('status');
 
-            // Show loading
-            statusDiv.className = 'loading';
-            statusDiv.textContent = 'Saving changes...';
-            statusDiv.style.display = 'block';
+            // Handle form submission
+            editForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const statusDiv = document.getElementById('errorMessage');
 
-            // Get form data
-			const formData = {
-				trackingNumber: document.getElementById('trackingNumber').value,
-				customerName: document.getElementById('customerName').value,
-				email: document.getElementById('email').value,
-				phone: document.getElementById('phone').value,
-				address: document.getElementById('address').value,
-				itemName: document.getElementById('itemName').value,
-				description: document.getElementById('description').value,
-				action: 'updateform'
-			};
-			
-			// Dynamically collect all 10 statuses, dates, and remarks
-			for (let i = 1; i <= 10; i++) {
-				const statusInput = document.getElementById(`status${i}`);
-				const dateInput = document.getElementById(`status${i}Date`);
-				const remarksInput = document.getElementById(`status${i}Remarks`);
-			
-				formData[`status${i}`] = statusInput ? statusInput.value : '';
-				formData[`status${i}Date`] = dateInput ? dateInput.value : '';
-				formData[`status${i}Remarks`] = remarksInput ? remarksInput.value : '';
-			}
-
-
-            // Log the ID we're updating
-            console.log('Updating business card with ID:', formData.recordId);
-
-            // Log request details
-            console.log('Sending JSON request to:', APPS_SCRIPT_URL);
-            console.log('JSON payload:', JSON.stringify(formData));
-
-            // Try JSON request first
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(formData),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                mode: 'cors'
-            })
-            .then(response => {
-                console.log('JSON response status:', response.status, response.statusText);
-                return response.text().then(text => ({ response, text }));
-            })
-            .then(({ response, text }) => {
-                console.log('Raw response (JSON):', text);
-                try {
-                    const data = JSON.parse(text);
-                    if (data.status === 'success') {
-                        statusDiv.className = 'success';
-                        statusDiv.textContent = 'Changes saved successfully!';
-                        setTimeout(() => {
-                            statusDiv.style.display = 'none';
-                        }, 3000);
-                    } else {
-                        throw new Error(data.message || 'Failed to save changes');
-                    }
-                } catch (error) {
-                    throw new Error(`Invalid JSON response: ${text}`);
-                }
-            })
-            .catch(error => {
-                console.error('JSON request failed:', error);
-                statusDiv.textContent = 'JSON request failed, trying FormData...';
-                // Fallback to FormData request
-                const formDataObj = new FormData();
-                for (const [key, value] of Object.entries(formData)) {
-                    formDataObj.append(key, value);
+                // Validate required fields
+                const customerName = document.getElementById('customerName').value;
+                const itemName = document.getElementById('itemName').value;
+                if (!customerName || !itemName) {
+                    statusDiv.className = 'error-message';
+                    statusDiv.textContent = 'Please fill in all required fields.';
+                    statusDiv.style.display = 'block';
+                    return;
                 }
 
-                console.log('Sending FormData request to:', APPS_SCRIPT_URL);
+                // Show loading
+                statusDiv.className = 'error-message';
+                statusDiv.textContent = 'Saving changes...';
+                statusDiv.style.display = 'block';
+
+                // Get form data
+                const formData = {
+                    trackingNumber: document.getElementById('trackingNumber').value,
+                    customerName: customerName,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value,
+                    itemName: itemName,
+                    description: document.getElementById('description').value,
+                    rowIndex: this.dataset.rowIndex,
+                    action: 'updateform'
+                };
+
+                // Dynamically collect all 10 statuses, dates, and remarks
+                for (let i = 1; i <= 10; i++) {
+                    const statusInput = document.getElementById(`status${i}`);
+                    const dateInput = document.getElementById(`status${i}Date`);
+                    const remarksInput = document.getElementById(`status${i}Remarks`);
+
+                    formData[`status${i}`] = statusInput ? statusInput.value : '';
+                    formData[`status${i}Date`] = dateInput ? formatDateForSheet(dateInput.value) : '';
+                    formData[`status${i}Remarks`] = remarksInput ? remarksInput.value : '';
+                }
+
+                // Log the ID we're updating
+                console.log('Updating tracking with ID:', formData.trackingNumber);
+
+                // Log request details
+                console.log('Sending JSON request to:', APPS_SCRIPT_URL);
+                console.log('JSON payload:', JSON.stringify(formData));
+
+                // Try JSON request first
                 fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    body: formDataObj,
+                    body: JSON.stringify(formData),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     mode: 'cors'
                 })
                 .then(response => {
-                    console.log('FormData response status:', response.status, response.statusText);
+                    console.log('JSON response status:', response.status, response.statusText);
                     return response.text().then(text => ({ response, text }));
                 })
                 .then(({ response, text }) => {
-                    console.log('Raw response (FormData):', text);
+                    console.log('Raw response (JSON):', text);
                     try {
                         const data = JSON.parse(text);
                         if (data.status === 'success') {
-                            statusDiv.className = 'success';
+                            statusDiv.className = 'error-message success';
                             statusDiv.textContent = 'Changes saved successfully!';
                             setTimeout(() => {
                                 statusDiv.style.display = 'none';
@@ -611,14 +599,51 @@
                         throw new Error(`Invalid JSON response: ${text}`);
                     }
                 })
-                .catch(formDataError => {
-                    console.error('FormData request failed:', formDataError);
-                    statusDiv.className = 'error';
-                    statusDiv.textContent = 'Error saving changes: ' + formDataError.message;
+                .catch(error => {
+                    console.error('JSON request failed:', error);
+                    statusDiv.textContent = 'JSON request failed, trying FormData...';
+
+                    // Fallback to FormData request
+                    const formDataObj = new FormData();
+                    for (const [key, value] of Object.entries(formData)) {
+                        formDataObj.append(key, value);
+                    }
+
+                    console.log('Sending FormData request to:', APPS_SCRIPT_URL);
+                    fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        body: formDataObj,
+                        mode: 'cors'
+                    })
+                    .then(response => {
+                        console.log('FormData response status:', response.status, response.statusText);
+                        return response.text().then(text => ({ response, text }));
+                    })
+                    .then(({ response, text }) => {
+                        console.log('Raw response (FormData):', text);
+                        try {
+                            const data = JSON.parse(text);
+                            if (data.status === 'success') {
+                                statusDiv.className = 'error-message success';
+                                statusDiv.textContent = 'Changes saved successfully!';
+                                setTimeout(() => {
+                                    statusDiv.style.display = 'none';
+                                }, 3000);
+                            } else {
+                                throw new Error(data.message || 'Failed to save changes');
+                            }
+                        } catch (error) {
+                            throw new Error(`Invalid JSON response: ${text}`);
+                        }
+                    })
+                    .catch(formDataError => {
+                        console.error('FormData request failed:', formDataError);
+                        statusDiv.className = 'error-message';
+                        statusDiv.textContent = 'Error saving changes: ' + formDataError.message;
+                    });
                 });
             });
         });
-		
     </script>
 </body>
 </html>
