@@ -332,6 +332,7 @@
         const API_KEY = 'AIzaSyByyiuwuJBysKl2xtvl6wCw6Gz9shyDzXs';
         const SHEET_ID = '1lKVyHbfdfPTfEUJbt870PtZZJ3rZxULl3VAf6I_9eIk';
         const SHEET_RANGE = 'Tracker!A:AL';
+       const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBDWS3q8ZDVpbFNuMqvIWykOjtt4nEMmdf-Vg-oWS-18tgP6MpK-67LEHl1kp7ay8/exec';
 
         document.addEventListener('DOMContentLoaded', function() {
             const editForm = document.getElementById('editForm');
@@ -502,6 +503,116 @@
                 errorMessage.style.display = 'none';
             }
         });
+		
+        // Handle form submission
+        document.getElementById('edit-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const statusDiv = document.getElementById('status');
+
+            // Show loading
+            statusDiv.className = 'loading';
+            statusDiv.textContent = 'Saving changes...';
+            statusDiv.style.display = 'block';
+
+            // Get form data
+            const formData = {
+                trackingNumber: document.getElementById('trackingNumber').value,
+                customerName: document.getElementById('customerName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                itemName: document.getElementById('itemName').value,
+                description: document.getElementById('description').value,
+				
+                status1: document.getElementById('status1').value,
+                status1Date: document.getElementById('status1Date').value,
+                status1Remarks: document.getElementById('status1Remarks').value,
+				
+				
+                action: 'updateform'
+            };
+
+            // Log the ID we're updating
+            console.log('Updating business card with ID:', formData.recordId);
+
+            // Log request details
+            console.log('Sending JSON request to:', APPS_SCRIPT_URL);
+            console.log('JSON payload:', JSON.stringify(formData));
+
+            // Try JSON request first
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(formData),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                mode: 'cors'
+            })
+            .then(response => {
+                console.log('JSON response status:', response.status, response.statusText);
+                return response.text().then(text => ({ response, text }));
+            })
+            .then(({ response, text }) => {
+                console.log('Raw response (JSON):', text);
+                try {
+                    const data = JSON.parse(text);
+                    if (data.status === 'success') {
+                        statusDiv.className = 'success';
+                        statusDiv.textContent = 'Changes saved successfully!';
+                        setTimeout(() => {
+                            statusDiv.style.display = 'none';
+                        }, 3000);
+                    } else {
+                        throw new Error(data.message || 'Failed to save changes');
+                    }
+                } catch (error) {
+                    throw new Error(`Invalid JSON response: ${text}`);
+                }
+            })
+            .catch(error => {
+                console.error('JSON request failed:', error);
+                statusDiv.textContent = 'JSON request failed, trying FormData...';
+                // Fallback to FormData request
+                const formDataObj = new FormData();
+                for (const [key, value] of Object.entries(formData)) {
+                    formDataObj.append(key, value);
+                }
+
+                console.log('Sending FormData request to:', APPS_SCRIPT_URL);
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formDataObj,
+                    mode: 'cors'
+                })
+                .then(response => {
+                    console.log('FormData response status:', response.status, response.statusText);
+                    return response.text().then(text => ({ response, text }));
+                })
+                .then(({ response, text }) => {
+                    console.log('Raw response (FormData):', text);
+                    try {
+                        const data = JSON.parse(text);
+                        if (data.status === 'success') {
+                            statusDiv.className = 'success';
+                            statusDiv.textContent = 'Changes saved successfully!';
+                            setTimeout(() => {
+                                statusDiv.style.display = 'none';
+                            }, 3000);
+                        } else {
+                            throw new Error(data.message || 'Failed to save changes');
+                        }
+                    } catch (error) {
+                        throw new Error(`Invalid JSON response: ${text}`);
+                    }
+                })
+                .catch(formDataError => {
+                    console.error('FormData request failed:', formDataError);
+                    statusDiv.className = 'error';
+                    statusDiv.textContent = 'Error saving changes: ' + formDataError.message;
+                });
+            });
+        });
+		
     </script>
 </body>
 </html>
