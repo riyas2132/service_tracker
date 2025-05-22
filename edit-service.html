@@ -515,22 +515,28 @@
             statusDiv.style.display = 'block';
 
             // Get form data
-            const formData = {
-                trackingNumber: document.getElementById('trackingNumber').value,
-                customerName: document.getElementById('customerName').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value,
-                itemName: document.getElementById('itemName').value,
-                description: document.getElementById('description').value,
-				
-                status1: document.getElementById('status1').value,
-                status1Date: document.getElementById('status1Date').value,
-                status1Remarks: document.getElementById('status1Remarks').value,
-				
-				
-                action: 'updateform'
-            };
+			const formData = {
+				trackingNumber: document.getElementById('trackingNumber').value,
+				customerName: document.getElementById('customerName').value,
+				email: document.getElementById('email').value,
+				phone: document.getElementById('phone').value,
+				address: document.getElementById('address').value,
+				itemName: document.getElementById('itemName').value,
+				description: document.getElementById('description').value,
+				action: 'updateform'
+			};
+			
+			// Dynamically collect all 10 statuses, dates, and remarks
+			for (let i = 1; i <= 10; i++) {
+				const statusInput = document.getElementById(`status${i}`);
+				const dateInput = document.getElementById(`status${i}Date`);
+				const remarksInput = document.getElementById(`status${i}Remarks`);
+			
+				formData[`status${i}`] = statusInput ? statusInput.value : '';
+				formData[`status${i}Date`] = dateInput ? dateInput.value : '';
+				formData[`status${i}Remarks`] = remarksInput ? remarksInput.value : '';
+			}
+
 
             // Log the ID we're updating
             console.log('Updating business card with ID:', formData.recordId);
