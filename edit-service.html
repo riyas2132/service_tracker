@@ -124,24 +124,68 @@
 
         .status-grid {
             display: grid;
-            gap: 1rem;
+            gap: 0;
             margin-top: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .status-row-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 3fr;
+            gap: 0;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .status-row-header > div {
+            padding: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            border-right: 1px solid var(--gray-200);
+        }
+
+        .status-row-header > div:last-child {
+            border-right: none;
         }
 
         .status-row {
             display: grid;
             grid-template-columns: 2fr 1fr 3fr;
-            gap: 0.5rem;
-            padding: 1rem;
-            background: var(--gray-50);
-            border-radius: 0.5rem;
+            gap: 0;
+            border-bottom: 1px solid var(--gray-200);
         }
 
-        .status-row-header {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--gray-700);
-            margin-bottom: 0.5rem;
+        .status-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-row > * {
+            padding: 0.75rem;
+            border-right: 1px solid var(--gray-200);
+            border: none;
+            border-radius: 0;
+            background: white;
+        }
+
+        .status-row > *:last-child {
+            border-right: none;
+        }
+
+        .status-row .form-input,
+        .status-row .form-select {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.25rem;
+            margin: 0.25rem;
+        }
+
+        .status-row .form-input:focus,
+        .status-row .form-select:focus {
+            border-color: var(--blue-500);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
         }
 
         .action-buttons {
@@ -204,8 +248,20 @@
         }
 
         @media (max-width: 768px) {
+            .status-row-header,
             .status-row {
                 grid-template-columns: 1fr;
+            }
+            
+            .status-row-header > div,
+            .status-row > * {
+                border-right: none;
+                border-bottom: 1px solid var(--gray-200);
+            }
+            
+            .status-row-header > div:last-child,
+            .status-row > *:last-child {
+                border-bottom: none;
             }
         }
     </style>
@@ -246,7 +302,7 @@
                             <input type="text" id="address" class="form-input">
                         </div>
                         <div class="form-field">
-                            <label for="itemName" class="form-label">Item Name</label>
+                            <label for="itemName" class="form-label">Service</label>
                             <input type="text" id="itemName" class="form-input" required>
                         </div>
                         <div class="form-field">
@@ -283,18 +339,7 @@
             const errorMessage = document.getElementById('errorMessage');
             const statusGrid = document.getElementById('statusGrid');
 
-            const statusOptions = [
-                'Application Submitted',
-                'Under Process',
-                'Pending Documents',
-                'Rejected',
-                'Medical Test Required',
-                'Emirates ID Typing',
-                'Change Status',
-                'Residency Stamping in Progress',
-                'Visa Stamped',
-                'Approved'
-            ];
+  
 
             // Get tracking number from URL
             const urlParams = new URLSearchParams(window.location.search);
@@ -376,37 +421,49 @@
                     { status: 34, date: 35, remarks: 36 }
                 ];
 
-                statusGrid.innerHTML = `
-                    <div class="status-row-header">Status</div>
-                    <div class="status-row-header">Date</div>
-                    <div class="status-row-header">Remarks</div>
+                // Create header row
+                const headerRow = document.createElement('div');
+                headerRow.className = 'status-row-header';
+                headerRow.innerHTML = `
+                    <div>Status</div>
+                    <div>Date</div>
+                    <div>Remarks</div>
                 `;
+                statusGrid.appendChild(headerRow);
 
                 statusColumns.forEach((col, index) => {
                     const statusRow = document.createElement('div');
                     statusRow.className = 'status-row';
 
-                    const statusSelect = document.createElement('select');
-                    statusSelect.className = 'form-select';
-                    statusSelect.name = `status${index + 1}`;
-                    statusSelect.innerHTML = `<option value="">Select Status</option>` +
-                        statusOptions.map(opt => `<option value="${opt}" ${row[col.status] === opt ? 'selected' : ''}>${opt}</option>`).join('');
+                    const statusCell = document.createElement('div');
+                    const statusInput = document.createElement('input');
+                    statusInput.type = 'text';
+                    statusInput.className = 'form-input';
+                    statusInput.name = `status${index + 1}`;
+                    statusInput.value = row[col.status] || '';
+                    statusInput.placeholder = 'Enter status...';
+                    statusCell.appendChild(statusInput);
 
+                    const dateCell = document.createElement('div');
                     const dateInput = document.createElement('input');
                     dateInput.type = 'date';
                     dateInput.className = 'form-input';
                     dateInput.name = `status${index + 1}Date`;
                     dateInput.value = row[col.date] ? formatDateForInput(row[col.date]) : '';
+                    dateCell.appendChild(dateInput);
 
+                    const remarksCell = document.createElement('div');
                     const remarksInput = document.createElement('input');
                     remarksInput.type = 'text';
                     remarksInput.className = 'form-input';
                     remarksInput.name = `status${index + 1}Remarks`;
                     remarksInput.value = row[col.remarks] || '';
+                    remarksInput.placeholder = 'Enter remarks...';
+                    remarksCell.appendChild(remarksInput);
 
-                    statusRow.appendChild(statusSelect);
-                    statusRow.appendChild(dateInput);
-                    statusRow.appendChild(remarksInput);
+                    statusRow.appendChild(statusCell);
+                    statusRow.appendChild(dateCell);
+                    statusRow.appendChild(remarksCell);
                     statusGrid.appendChild(statusRow);
                 });
 
@@ -428,76 +485,9 @@
                 return `${day}-${month}-${year}`;
             }
 
-            async function saveChanges(formData, rowIndex) {
-                showLoader(true);
-                hideError();
+             
 
-                try {
-                    const values = [
-                        formData.trackingNumber,
-                        formData.customerName,
-                        formData.email,
-                        formData.phone,
-                        formData.address,
-                        formData.itemName,
-                        formData.description,
-                    ];
-
-                    // Add status fields
-                    for (let i = 1; i <= 10; i++) {
-                        values.push(formData[`status${i}`] || '');
-                        values.push(formData[`status${i}Date`] ? formatDateForSheet(formData[`status${i}Date`]) : '');
-                        values.push(formData[`status${i}Remarks`] || '');
-                    }
-
-                    // Calculate completed percentage (based on last non-empty status)
-                    let completedPercentage = 0;
-                    for (let i = 10; i >= 1; i--) {
-                        if (formData[`status${i}`]) {
-                            completedPercentage = i * 10;
-                            break;
-                        }
-                    }
-                    values.push(completedPercentage.toString());
-
-                    const response = await gapi.client.sheets.spreadsheets.values.update({
-                        spreadsheetId: SHEET_ID,
-                        range: `Tracker!A${rowIndex}:AL${rowIndex}`,
-                        valueInputOption: 'RAW',
-                        resource: { values: [values] }
-                    });
-
-                    alert('Changes saved successfully!');
-                    window.location.href = 'index.html';
-                } catch (error) {
-                    console.error('Error saving data:', error);
-                    showError('An error occurred while saving changes.');
-                } finally {
-                    showLoader(false);
-                }
-            }
-
-            editForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const formData = {
-                    trackingNumber: document.getElementById('trackingNumber').value,
-                    customerName: document.getElementById('customerName').value,
-                    email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value,
-                    address: document.getElementById('address').value,
-                    itemName: document.getElementById('itemName').value,
-                    description: document.getElementById('description').value,
-                };
-
-                // Collect status fields
-                for (let i = 1; i <= 10; i++) {
-                    formData[`status${i}`] = document.querySelector(`select[name="status${i}"]`).value;
-                    formData[`status${i}Date`] = document.querySelector(`input[name="status${i}Date"]`).value;
-                    formData[`status${i}Remarks`] = document.querySelector(`input[name="status${i}Remarks"]`).value;
-                }
-
-                await saveChanges(formData, editForm.dataset.rowIndex);
-            });
+            
 
             function showLoader(show) {
                 loader.style.display = show ? 'block' : 'none';
