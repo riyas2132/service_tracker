@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Service Tracking</title>
+    <title>Add New Service</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -283,8 +283,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Edit Service Tracking</h1>
-            <p>Modify tracking record details and status</p>
+            <h1>Add New Service</h1>
+            <p>New tracking record details and status</p>
         </div>
         
         <div class="content">
@@ -548,7 +548,7 @@
                     itemName: itemName,
                     description: document.getElementById('description').value,
                     rowIndex: this.dataset.rowIndex,
-                    action: 'updateform'
+                    action: 'new'
                 };
 
                 // Dynamically collect all 10 statuses, dates, and remarks
