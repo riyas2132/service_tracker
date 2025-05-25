@@ -150,6 +150,25 @@
             color: white;
         }
 
+        .add-service-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            background: var(--blue-600);
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .add-service-button:hover {
+            background: var(--blue-700);
+        }
+
         .loader {
             display: none;
             margin: 2rem auto;
@@ -391,12 +410,15 @@
                     </div>
                 </div>
                 <div class="filter-container">
-                    <button class="status-filter active" data-status="all">All</button>
-                    <button class="status-filter" data-status="delivered">Delivered</button>
-                    <button class="status-filter" data-status="transit">In Transit</button>
-                    <button class="status-filter" data-status="processing">Processing</button>
-                    <button class="status-filter" data-status="pending">Pending</button>
+                    <button class="status-filter active" data-status="all">All</button> 
                 </div>
+                <a href="add-service.html" class="add-service-button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add New Service
+                </a>
             </div>
 
             <div id="loader" class="loader"></div>
@@ -454,11 +476,11 @@
                     'apiKey': API_KEY,
                     'discoveryDocs': ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
                 }).then(() => {
-                    console.log('Google Sheets API initialized');
+                    console.log('Google Sheets API initialized successfully');
                     fetchTrackingData();
                 }).catch((error) => {
                     console.error('Error initializing Google Sheets API:', error);
-                    showError('Failed to initialize tracking system');
+                    showError(`Failed to initialize Google Sheets API: ${error.message || 'Unknown error'}`);
                 });
             }
             
@@ -473,9 +495,26 @@
                     });
                     
                     const data = response.result.values;
-                    if (data && data.length > 1) {
-                        // Skip header row
-                        allTrackingData = data.slice(1).map(row => ({
+                    console.log('Raw data from Google Sheets:', data); // Debugging
+                    
+                    if (!data || data.length === 0) {
+                        console.warn('No data returned from Google Sheet');
+                        showEmptyState(true);
+                        showError('No data found in the specified sheet range.');
+                        return;
+                    }
+                    
+                    if (data.length === 1) {
+                        console.warn('Only header row found in Google Sheet');
+                        showEmptyState(true);
+                        showError('No tracking records found, only header row present.');
+                        return;
+                    }
+                    
+                    // Skip header row and map data
+                    allTrackingData = data.slice(1).map((row, index) => {
+                        console.log(`Processing row ${index + 1}:`, row); // Debugging
+                        return {
                             trackingNumber: row[0] || '',
                             name: row[1] || '',
                             email: row[2] || '',
@@ -484,19 +523,27 @@
                             serviceType: row[5] || '',
                             description: row[6] || '',
                             status: getLastStatus(row),
-                            lastUpdate: getLastDate(row),
+                            lastUpdate: row[8] || row[11] || row[14] || row[17] || row[20] || row[23] || row[26] || row[29] || row[32] || row[35] || '',
                             percentComplete: parseInt(row[37]) || 0,
-                        }));
-                        
-                        // Initial display with all data
-                        filteredData = [...allTrackingData];
-                        displayTrackingList();
-                    } else {
-                        showEmptyState(true);
-                    }
+                        };
+                    });
+                    
+                    // Sort data by lastUpdate in descending order
+                    allTrackingData.sort((a, b) => {
+                        const dateA = a.lastUpdate ? new Date(a.lastUpdate) : new Date(0);
+                        const dateB = b.lastUpdate ? new Date(b.lastUpdate) : new Date(0);
+                        return dateB - dateA || b.trackingNumber.localeCompare(a.trackingNumber);
+                    });
+                    
+                    console.log('Processed and sorted tracking data:', allTrackingData); // Debugging
+                    
+                    // Initial display with all data
+                    filteredData = [...allTrackingData];
+                    displayTrackingList();
                 } catch (error) {
-                    console.error('Error fetching data:', error);
-                    showError('An error occurred while loading tracking data.');
+                    console.error('Error fetching data from Google Sheets:', error);
+                    showError(`Failed to load tracking data: ${error.message || 'Unknown error'}`);
+                    showEmptyState(true);
                 } finally {
                     showLoader(false);
                 }
@@ -528,6 +575,8 @@
                 const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
                 const endIndex = startIndex + ITEMS_PER_PAGE;
                 const currentPageData = filteredData.slice(startIndex, endIndex);
+                
+                console.log('Current page data:', currentPageData); // Debugging
                 
                 if (currentPageData.length === 0) {
                     showEmptyState(true);
@@ -742,6 +791,7 @@
                     return true;
                 });
                 
+                console.log('Filtered data:', filteredData); // Debugging
                 displayTrackingList();
             }
             
