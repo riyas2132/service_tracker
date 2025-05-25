@@ -296,7 +296,7 @@
                     <h2>Customer Details</h2>
                     <div class="form-grid">
                         <div class="form-field">
-                            <label for="trackingNumber" class="form-label">Tracking Number</label>
+                            <label for="trackingNumber" class="form-label">Tracking Number (Auto generated!)</label>
                             <input type="text" id="trackingNumber" class="form-input" readonly>
                         </div>
                         <div class="form-field">
@@ -327,7 +327,7 @@
                 </div>
 
                 <div class="form-section">
-                    <h2>Status History</h2>
+                    <h2></h2>
                     <div class="status-grid" id="statusGrid">
                         <!-- Status rows will be dynamically generated -->
                     </div>
@@ -356,12 +356,9 @@
 
             // Get tracking number from URL
             const urlParams = new URLSearchParams(window.location.search);
-            const trackingNumber = urlParams.get('tracking') || '10002';
+            const trackingNumber = urlParams.get('tracking') ;
 
-            if (!trackingNumber) {
-                showError('No tracking number provided.');
-                return;
-            }
+ 
 
             gapi.load('client', initClient);
 
@@ -392,10 +389,7 @@
                     if (data && data.length > 1) {
                         // Find the row with the matching tracking number
                         const rowIndex = data.findIndex(row => row[0] === trackingNumber);
-                        if (rowIndex === -1) {
-                            showError('Tracking number not found.');
-                            return;
-                        }
+                         
 
                         const row = data[rowIndex];
                         populateForm(row, rowIndex + 1); // +1 to account for header row
@@ -404,7 +398,7 @@
                     }
                 } catch (error) {
                     console.error('Error fetching data:', error);
-                    showError('An error occurred while loading tracking data.');
+                     
                 } finally {
                     showLoader(false);
                 }
@@ -420,7 +414,7 @@
                 document.getElementById('itemName').value = row[5] || '';
                 document.getElementById('description').value = row[6] || '';
 
-                // Populate status history
+   
                 const statusColumns = [
                     { status: 7, date: 8, remarks: 9 },
                     { status: 10, date: 11, remarks: 12 },
@@ -626,6 +620,10 @@
                             if (data.status === 'success') {
                                 statusDiv.className = 'error-message success';
                                 statusDiv.textContent = 'Changes saved successfully!';
+								document.getElementById('trackingNumber').value = data.trackingNumber 
+								
+								document.getElementById('trackingNumber').style.color = 'red';
+								
                                 setTimeout(() => {
                                     statusDiv.style.display = 'none';
                                 }, 3000);
