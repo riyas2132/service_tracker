@@ -532,6 +532,8 @@
                 statusDiv.textContent = 'Saving changes...';
                 statusDiv.style.display = 'block';
 
+				const today = new Date();
+				const formattedDate = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
                 // Get form data
                 const formData = {
                     trackingnumber: document.getElementById('trackingNumber').value,
@@ -542,19 +544,14 @@
                     itemName: itemName,
                     description: document.getElementById('description').value,
                     rowIndex: this.dataset.rowIndex,
+					
+                    status1 : 'Created',
+                    status1Date: formattedDate,
+                    status1Remarks : 'Default status',		
+					
                     action: 'new'
                 };
-
-                // Dynamically collect all 10 statuses, dates, and remarks
-                for (let i = 1; i <= 10; i++) {
-                    const statusInput = document.getElementById(`status${i}`);
-                    const dateInput = document.getElementById(`status${i}Date`);
-                    const remarksInput = document.getElementById(`status${i}Remarks`);
-
-                    formData[`status${i}`] = statusInput ? statusInput.value : '';
-                    formData[`status${i}Date`] = dateInput ? formatDateForSheet(dateInput.value) : '';
-                    formData[`status${i}Remarks`] = remarksInput ? remarksInput.value : '';
-                }
+ 
 
                 // Log the ID we're updating
                 console.log('Updating tracking with ID:', formData.trackingNumber);
