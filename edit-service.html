@@ -122,6 +122,44 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
+        .whatsapp-link-container {
+            position: relative;
+        }
+
+        .whatsapp-link {
+            background: var(--green-100);
+            border: 1px solid var(--green-500);
+            color: var(--green-800);
+            font-size: 0.875rem;
+            word-break: break-all;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .whatsapp-link:hover {
+            background: var(--green-500);
+            color: white;
+        }
+
+        .copy-button {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--green-500);
+            color: white;
+            border: none;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .copy-button:hover {
+            background: var(--green-800);
+        }
+
         .status-grid {
             display: grid;
             gap: 0;
@@ -333,7 +371,7 @@ input[type="range"]::-webkit-slider-thumb {
                         </div>
                         <div class="form-field">
                             <label for="phone" class="form-label">Phone</label>
-                            <input type="tel" id="phone" class="form-input">
+                            <input type="tel" id="phone" class="form-input" oninput="updateWhatsAppLink()">
                         </div>
                         <div class="form-field">
                             <label for="address" class="form-label">Address</label>
@@ -352,6 +390,16 @@ input[type="range"]::-webkit-slider-thumb {
 							<label for="percentage" id="percentagelabel" class="form-label">Percentage: <span id="percentageValue"></span>%</label>
 							<input type="range" id="percentage" class="form-input" min="1" max="100" value="" oninput="document.getElementById('percentageValue').textContent = this.value">
 						</div>
+
+                        <div class="form-field" style="grid-column: 1 / -1;">
+                            <label for="whatsappLink" class="form-label">WhatsApp Link</label>
+                            <div class="whatsapp-link-container">
+                                <a id="whatsappLink" class="form-input whatsapp-link" href="#" target="_blank" style="display: block; text-decoration: none; padding: 0.75rem;">
+                                    Click here to send WhatsApp message
+                                </a>
+                                <button type="button" class="copy-button" onclick="copyWhatsAppLink()">Copy URL</button>
+                            </div>
+                        </div>
 						
                     </div>
                 </div>
@@ -377,6 +425,66 @@ input[type="range"]::-webkit-slider-thumb {
         const SHEET_ID = '1lKVyHbfdfPTfEUJbt870PtZZJ3rZxULl3VAf6I_9eIk';
         const SHEET_RANGE = 'Tracker!A:AL';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxSGsq2QrJGV-2jDA5dNlCER3U_HK8ssm9gZdZJN48kqRiF96hy-Ca0mvH8Mm_Y-e7HTw/exec';
+
+        function updateWhatsAppLink() {
+            const phoneNumber = document.getElementById('phone').value;
+            const trackingNumber = document.getElementById('trackingNumber').value;
+            const whatsappLinkElement = document.getElementById('whatsappLink');
+            
+            if (phoneNumber && trackingNumber) {
+                // Clean phone number (remove spaces, dashes, etc.)
+                const cleanPhone = phoneNumber.replace(/\D/g, '');
+                
+                // Create the tracking URL
+                const trackingUrl = `https://riyas2132.github.io/service_tracker/?tracking=${trackingNumber}`;
+                
+                // Create the WhatsApp message
+                const message = `To track your service status click the link ${trackingUrl}`;
+                
+                // Create the WhatsApp link
+                const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+                
+                whatsappLinkElement.href = whatsappUrl;
+                whatsappLinkElement.textContent = `Send WhatsApp to ${phoneNumber}`;
+                whatsappLinkElement.style.pointerEvents = 'auto';
+            } else {
+                whatsappLinkElement.href = '#';
+                whatsappLinkElement.textContent = 'Enter phone number and tracking number to generate WhatsApp link';
+                whatsappLinkElement.style.pointerEvents = 'none';
+            }
+        }
+
+        function copyWhatsAppLink() {
+            const whatsappLink = document.getElementById('whatsappLink');
+            const url = whatsappLink.href;
+            
+            if (url && url !== '#') {
+                navigator.clipboard.writeText(url).then(() => {
+                    const button = document.querySelector('.copy-button');
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = url;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    const button = document.querySelector('.copy-button');
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                });
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             const editForm = document.getElementById('edit-form');
@@ -451,6 +559,9 @@ input[type="range"]::-webkit-slider-thumb {
                 document.getElementById('description').value = row[6] || '';
 				document.getElementById('percentage').value = row[37] || '';
 				document.getElementById('percentageValue').textContent = row[37] || '';
+
+                // Update WhatsApp link after populating phone and tracking number
+                updateWhatsAppLink();
 
                 // Populate status history
                 const statusColumns = [
