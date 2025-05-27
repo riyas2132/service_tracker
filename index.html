@@ -370,6 +370,10 @@
                         <h3>Customer Details</h3>
                         <div id="customerDetails"></div>
                     </div>
+					<div class="details-card">
+                        <h3>Images</h3>
+                        <div id="imageDetails"></div>
+                    </div>
                     <div class="details-card">
                         <h3>Service Details</h3>
                         <div id="serviceDetails"></div>
@@ -386,7 +390,7 @@
     <script>
         const API_KEY = 'AIzaSyByyiuwuJBysKl2xtvl6wCw6Gz9shyDzXs';
         const SHEET_ID = '1lKVyHbfdfPTfEUJbt870PtZZJ3rZxULl3VAf6I_9eIk';
-        const SHEET_RANGE = 'Tracker!A:AL';
+        const SHEET_RANGE = 'Tracker!A:AM';
 
         document.addEventListener('DOMContentLoaded', function() {
             const trackingInput = document.getElementById('trackingInput');
@@ -457,6 +461,9 @@
                             phone: trackingData[3] || '',
                             address: trackingData[4] || '',
                         },
+						imageDetails: {
+                            image: trackingData[38] || '',  
+                        },
                         itemDetails: {
                             description: trackingData[5] || '',
                             detailDescription: trackingData[6] || '',
@@ -506,6 +513,9 @@
                 document.getElementById('percentComplete').textContent = data.percentComplete;
 
                 displayCustomerDetails(data.customerDetails);
+				
+				displayCustomerImage(data.imageDetails);
+				
                 displayServiceDetails(data.itemDetails);
                 displayTrackingHistory(data.trackingHistory);
 
@@ -531,6 +541,54 @@
                     </div>
                 `).join('');
             }
+			
+			function displayCustomerImage(details) {
+					const icons = {
+						image: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>',
+						image1: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>'
+							};
+						console.log('xxxxxxxxxxxxxxxxx'); 
+					 console.log(details);
+						const container = document.getElementById('imageDetails');
+						container.innerHTML = Object.entries(details).map(([key, value]) => {
+							if (key === 'image') {
+								return `
+									<div class="details-row">
+										<div class="details-icon">${icons[key]}</div>
+										<div class="details-content">
+											<div class="details-label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
+											<div class="details-value">
+												${value ? `<img src="https://drive.google.com/thumbnail?id=${value}&sz=w200-h200" alt="Customer Image" class="card-image" onerror="this.style.display='none'">` : '<span>No image available</span>'}
+											</div>
+										</div>
+									</div>
+								`;
+							}
+							else if (key === 'image1') {
+								return `
+									<div class="details-row">
+										<div class="details-icon">${icons[key]}</div>
+										<div class="details-content">
+											<div class="details-label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
+											<div class="details-value">
+												${value ? `<img src="https://drive.google.com/thumbnail?id=${value}&sz=w200-h200" alt="Customer Image" class="card-image" onerror="this.style.display='none'">` : '<span>No image available</span>'}
+											</div>
+										</div>
+									</div>
+								`;
+							}else {
+								return `
+									<div class="details-row">
+										<div class="details-icon">${icons[key]}</div>
+										<div class="details-content">
+											<div class="details-label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
+											<div class="details-value">${value}</div>
+										</div>
+									</div>
+								`;
+							}
+						}).join('');
+				}
 
             function displayServiceDetails(details) {
                 const icons = {
