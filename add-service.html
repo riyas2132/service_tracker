@@ -122,6 +122,185 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
+        /* File Upload Styles */
+        .file-upload-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border: 2px dashed var(--gray-200);
+            border-radius: 0.75rem;
+            background: var(--gray-50);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .file-upload-section:hover {
+            border-color: var(--blue-500);
+            background: var(--blue-50);
+        }
+
+        .file-upload-section.dragover {
+            border-color: var(--blue-600);
+            background: var(--blue-100);
+            transform: translateY(-2px);
+        }
+
+        .file-upload-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .file-upload-icon {
+            width: 3rem;
+            height: 3rem;
+            background: var(--blue-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-600);
+            font-size: 1.5rem;
+        }
+
+        .file-upload-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .file-upload-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .file-upload-subtitle {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-button {
+            padding: 0.75rem 1.5rem;
+            background: var(--blue-600);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .file-upload-button:hover {
+            background: var(--blue-700);
+        }
+
+        .file-selected {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--green-100);
+            border: 1px solid var(--green-500);
+            border-radius: 0.5rem;
+            color: var(--green-800);
+            display: none;
+        }
+
+        .file-selected.show {
+            display: block;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .file-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--green-500);
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--green-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .file-size {
+            font-size: 0.875rem;
+            color: var(--green-700);
+        }
+
+        .file-remove {
+            background: none;
+            border: none;
+            color: var(--red-500);
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+
+        .file-remove:hover {
+            background: var(--red-100);
+        }
+
+        /* WhatsApp Button Styles */
+        .whatsapp-section {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .whatsapp-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #25d366;
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .whatsapp-button:hover {
+            background: #128c7e;
+        }
+
+        .whatsapp-icon {
+            font-size: 1.125rem;
+        }
+
         .status-grid {
             display: grid;
             gap: 0;
@@ -252,7 +431,21 @@
             color: var(--green-800);
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
+            .container {
+                margin: 0.5rem;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
             .status-row-header,
             .status-row {
                 grid-template-columns: 1fr;
@@ -276,6 +469,48 @@
                 font-weight: 500;
                 color: var(--gray-700);
                 margin-bottom: 0.25rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .whatsapp-section {
+                justify-content: center;
+            }
+            
+            .file-upload-wrapper {
+                padding: 1rem;
+            }
+            
+            .file-upload-icon {
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 1.25rem;
+            }
+            
+            .file-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .file-upload-section {
+                padding: 1rem;
             }
         }
     </style>
@@ -323,10 +558,47 @@
                             <label for="description" class="form-label">Description</label>
                             <input type="text" id="description" class="form-input">
                         </div>
-                        <div class="action-buttons">
-						<a href="#" id="whatsapp"  class="button save-button" onclick="sendWhatsAppMessage()">Send to WhatsApp</a>
-						</div>
                     </div>
+                    
+                    <!-- File Upload Section -->
+                    <div class="file-upload-section" id="fileUploadSection">
+                        <div class="file-upload-wrapper">
+                            <div class="file-upload-icon">📎</div>
+                            <div class="file-upload-text">
+                                <div class="file-upload-title">Upload Document</div>
+                                <div class="file-upload-subtitle">Drag and drop or click to browse</div>
+                            </div>
+                            <button type="button" class="file-upload-button" onclick="document.getElementById('fileInput').click()">
+                                Choose File
+                            </button>
+                            <input type="file" id="fileInput" class="file-input" onchange="LoadFile(event)" />
+                        </div>
+                    </div>
+                    
+                    <!-- File Selected Display -->
+                    <div class="file-selected" id="fileSelected">
+                        <div class="file-info">
+                            <div class="file-icon" id="fileIcon">📄</div>
+                            <div class="file-details">
+                                <div class="file-name" id="fileName"></div>
+                                <div class="file-size" id="fileSize"></div>
+                            </div>
+                            <button type="button" class="file-remove" onclick="removeFile()" title="Remove file">×</button>
+                        </div>
+                    </div>
+                    
+                    <!-- WhatsApp Section -->
+                    <div class="whatsapp-section">
+                        <a href="#" id="whatsapp" class="whatsapp-button" onclick="sendWhatsAppMessage()">
+                            <span class="whatsapp-icon">📱</span>
+                            Send to WhatsApp
+                        </a>
+                    </div>
+                    
+                    <!-- Hidden inputs for file data -->
+                    <input type="hidden" id="fileData" name="fileData" />
+                    <input type="hidden" id="mimeType" name="mimeType" />
+                    <input type="hidden" id="fileNameHidden" name="fileName" />
                 </div>
 
                 <div class="form-section">
@@ -349,7 +621,7 @@
         const API_KEY = 'AIzaSyByyiuwuJBysKl2xtvl6wCw6Gz9shyDzXs';
         const SHEET_ID = '1lKVyHbfdfPTfEUJbt870PtZZJ3rZxULl3VAf6I_9eIk';
         const SHEET_RANGE = 'Tracker!A:AL';
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxSGsq2QrJGV-2jDA5dNlCER3U_HK8ssm9gZdZJN48kqRiF96hy-Ca0mvH8Mm_Y-e7HTw/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzAWRQ1AMMf1_B40R_8lgxF6F-aYs0IxE27FXI0xAWRl7jx9BRZ4FPYLvj8KTNvo2l3Sg/exec';
 
         document.addEventListener('DOMContentLoaded', function() {
             const editForm = document.getElementById('edit-form');
@@ -361,7 +633,46 @@
             const urlParams = new URLSearchParams(window.location.search);
             const trackingNumber = urlParams.get('tracking') ;
 
- 
+            // Add drag and drop functionality
+            const fileUploadSection = document.getElementById('fileUploadSection');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                fileUploadSection.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileUploadSection.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileUploadSection.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                fileUploadSection.classList.add('dragover');
+            }
+
+            function unhighlight(e) {
+                fileUploadSection.classList.remove('dragover');
+            }
+
+            fileUploadSection.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    const fileInput = document.getElementById('fileInput');
+                    fileInput.files = files;
+                    LoadFile({ target: fileInput });
+                }
+            }
 
             gapi.load('client', initClient);
 
@@ -393,7 +704,6 @@
                         // Find the row with the matching tracking number
                         const rowIndex = data.findIndex(row => row[0] === trackingNumber);
                          
-
                         const row = data[rowIndex];
                         populateForm(row, rowIndex + 1); // +1 to account for header row
                     } else {
@@ -417,7 +727,6 @@
                 document.getElementById('itemName').value = row[5] || '';
                 document.getElementById('description').value = row[6] || '';
 
-   
                 const statusColumns = [
                     { status: 7, date: 8, remarks: 9 },
                     { status: 10, date: 11, remarks: 12 },
@@ -535,8 +844,9 @@
                 statusDiv.textContent = 'Saving changes...';
                 statusDiv.style.display = 'block';
 
-				const today = new Date();
-				const formattedDate = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
+                const today = new Date();
+                const formattedDate = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
+                
                 // Get form data
                 const formData = {
                     trackingnumber: document.getElementById('trackingNumber').value,
@@ -547,14 +857,17 @@
                     itemName: itemName,
                     description: document.getElementById('description').value,
                     rowIndex: this.dataset.rowIndex,
-					
+                    
+                    fileData: document.getElementById('fileData').value,
+                    mimeType: document.getElementById('mimeType').value,
+                    fileName: document.getElementById('fileNameHidden').value, 
+                    
                     status1 : 'Created',
                     status1Date: formattedDate,
-                    status1Remarks : 'Default status',		
-					
+                    status1Remarks : 'Default status',       
+                    
                     action: 'new'
                 };
- 
 
                 // Log the ID we're updating
                 console.log('Updating tracking with ID:', formData.trackingNumber);
@@ -620,11 +933,11 @@
                             if (data.status === 'success') {
                                 statusDiv.className = 'error-message success';
                                 statusDiv.textContent = 'Changes saved successfully!';
-								document.getElementById('trackingNumber').value = data.trackingNumber  
-								document.getElementById('trackingNumber').style.color = 'red';
-								
-								document.getElementById('whatsapp').style.color = 'red';
-								
+                                document.getElementById('trackingNumber').value = data.trackingNumber  
+                                document.getElementById('trackingNumber').style.color = 'red';
+                                
+                                document.getElementById('whatsapp').style.color = 'red';
+                                
                                 setTimeout(() => {
                                     statusDiv.style.display = 'none';
                                 }, 3000);
@@ -643,29 +956,103 @@
                 });
             });
         });
-	
-function sendWhatsAppMessage() {
-  const phoneInput = document.getElementById('phone').value.trim();
 
-  if (!phoneInput) {
-    alert("Please enter a phone number.");
-    return;
-  }
+        function sendWhatsAppMessage() {
+            const phoneInput = document.getElementById('phone').value.trim();
 
-  // Example tracking number
-  const trackingNumber = document.getElementById('trackingNumber').value.trim(); 
-  const message = `To track your service status click the link: https://riyas2132.github.io/service_tracker/?tracking=${trackingNumber}`;
+            if (!phoneInput) {
+                alert("Please enter a phone number.");
+                return;
+            }
 
-  // Remove any non-digit characters
-  const cleanedPhone = phoneInput.replace(/\D/g, '');
+            // Example tracking number
+            const trackingNumber = document.getElementById('trackingNumber').value.trim(); 
+            const message = `To track your service status click the link: https://riyas2132.github.io/service_tracker/?tracking=${trackingNumber}`;
 
-  // Create WhatsApp link
-  const whatsappLink = `https://wa.me/${cleanedPhone}?text=${encodeURIComponent(message)}`;
+            // Remove any non-digit characters
+            const cleanedPhone = phoneInput.replace(/\D/g, '');
 
-  // Open the link
-  window.open(whatsappLink, '_blank');
-}
-		
+            // Create WhatsApp link
+            const whatsappLink = `https://wa.me/${cleanedPhone}?text=${encodeURIComponent(message)}`;
+
+            // Open the link
+            window.open(whatsappLink, '_blank');
+        }
+
+        function LoadFile(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+            
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                console.log(e.target.result);
+                var fileData = e.target.result.substr(e.target.result.indexOf(",")+1);
+                var mimeTypeStart = e.target.result.indexOf("data:") + 5;
+                var mimeTypeEnd = e.target.result.indexOf(";");
+                var mimeType = e.target.result.substr(mimeTypeStart, mimeTypeEnd - mimeTypeStart);
+                var fileName = file.name;
+                
+                document.getElementById("fileData").value = fileData;
+                document.getElementById("mimeType").value = mimeType;
+                document.getElementById("fileNameHidden").value = fileName;
+                
+                // Show file selected UI
+                showFileSelected(fileName, file.size, mimeType);
+            };    
+            reader.readAsDataURL(file);
+        }
+
+        function showFileSelected(fileName, fileSize, mimeType) {
+            const fileSelectedDiv = document.getElementById('fileSelected');
+            const fileNameSpan = document.getElementById('fileName');
+            const fileSizeSpan = document.getElementById('fileSize');
+            const fileIcon = document.getElementById('fileIcon');
+            
+            fileNameSpan.textContent = fileName;
+            fileSizeSpan.textContent = formatFileSize(fileSize);
+            
+            // Set appropriate icon based on file type
+            if (mimeType.startsWith('image/')) {
+                fileIcon.textContent = '🖼️';
+            } else if (mimeType.includes('pdf')) {
+                fileIcon.textContent = '📄';
+            } else if (mimeType.includes('word') || mimeType.includes('document')) {
+                fileIcon.textContent = '📝';
+            } else if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) {
+                fileIcon.textContent = '📊';
+            } else {
+                fileIcon.textContent = '📎';
+            }
+            
+            fileSelectedDiv.classList.add('show');
+            
+            // Hide the upload section
+            document.getElementById('fileUploadSection').style.display = 'none';
+        }
+
+        function removeFile() {
+            // Clear hidden inputs
+            document.getElementById('fileData').value = '';
+            document.getElementById('mimeType').value = '';
+            document.getElementById('fileNameHidden').value = '';
+            
+            // Clear file input
+            document.getElementById('fileInput').value = '';
+            
+            // Hide file selected UI
+            document.getElementById('fileSelected').classList.remove('show');
+            
+            // Show upload section again
+            document.getElementById('fileUploadSection').style.display = 'block';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
     </script>
 </body>
 </html>
