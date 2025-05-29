@@ -556,6 +556,8 @@ input[type="range"]::-webkit-slider-thumb {
                         </div>
 						
                     </div>
+					
+					
 					<!-- File Upload Section -->
                     <div class="file-upload-section" id="fileUploadSection">
                         <div class="file-upload-wrapper">
@@ -586,6 +588,41 @@ input[type="range"]::-webkit-slider-thumb {
                     <input type="hidden" id="fileData" name="fileData" />
                     <input type="hidden" id="mimeType" name="mimeType" />
                     <input type="hidden" id="fileNameHidden" name="fileName" />
+
+
+
+
+					<!-- File Upload Section -->
+                    <div class="file-upload-section" id="fileUploadSection1">
+                        <div class="file-upload-wrapper">
+                            <div class="file-upload-icon">📎</div>
+                            <div class="file-upload-text">
+                                <div class="file-upload-title">Upload Document</div>
+                                <div class="file-upload-subtitle">Drag and drop or click to browse</div>
+                            </div>
+                            <button type="button" class="file-upload-button" onclick="document.getElementById('fileInput1').click()">
+                                Choose File
+                            </button>
+                            <input type="file" id="fileInput1" class="file-input" onchange="LoadFile1(event)" />
+                        </div>
+                    </div>
+					<!-- File Selected Display -->
+                    <div class="file-selected" id="fileSelected1">
+                        <div class="file-info">
+                            <div class="file-icon" id="fileIcon1">📄</div>
+                            <div class="file-details">
+                                <div class="file-name" id="fileName1"></div>
+                                <div class="file-size" id="fileSize1"></div>
+                            </div>
+                            <button type="button" class="file-remove" onclick="removeFile1()" title="Remove file">×</button>
+                        </div>
+                    </div>
+					
+					<!-- Hidden inputs for file data -->
+                    <input type="hidden" id="fileData1" name="fileData" />
+                    <input type="hidden" id="mimeType1" name="mimeType" />
+                    <input type="hidden" id="fileNameHidden1" name="fileName" />
+
 					
                 </div>
 
@@ -609,7 +646,7 @@ input[type="range"]::-webkit-slider-thumb {
         const API_KEY = 'AIzaSyByyiuwuJBysKl2xtvl6wCw6Gz9shyDzXs';
         const SHEET_ID = '1lKVyHbfdfPTfEUJbt870PtZZJ3rZxULl3VAf6I_9eIk';
         const SHEET_RANGE = 'Tracker!A:AL';
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzAWRQ1AMMf1_B40R_8lgxF6F-aYs0IxE27FXI0xAWRl7jx9BRZ4FPYLvj8KTNvo2l3Sg/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkVdU-XUg5FM9vTYBvpeqCPWfEu5Ilu5dT0kETj2FWcySMJcEwFCPhes7YHniRDyyUNw/exec';
 
         function updateWhatsAppLink() {
             const phoneNumber = document.getElementById('phone').value;
@@ -881,6 +918,10 @@ input[type="range"]::-webkit-slider-thumb {
                     mimeType: document.getElementById('mimeType').value,
                     fileName: document.getElementById('fileNameHidden').value, 
 					
+					fileData1: document.getElementById('fileData1').value,
+                    mimeType1: document.getElementById('mimeType1').value,
+                    fileName1: document.getElementById('fileNameHidden1').value, 
+					
                     rowIndex: this.dataset.rowIndex,
                     action: 'updateform'
                 };
@@ -1001,6 +1042,29 @@ input[type="range"]::-webkit-slider-thumb {
             };    
             reader.readAsDataURL(file);
         }
+		
+        function LoadFile1(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+            
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                console.log(e.target.result);
+                var fileData = e.target.result.substr(e.target.result.indexOf(",")+1);
+                var mimeTypeStart = e.target.result.indexOf("data:") + 5;
+                var mimeTypeEnd = e.target.result.indexOf(";");
+                var mimeType = e.target.result.substr(mimeTypeStart, mimeTypeEnd - mimeTypeStart);
+                var fileName = file.name;
+                
+                document.getElementById("fileData1").value = fileData;
+                document.getElementById("mimeType1").value = mimeType;
+                document.getElementById("fileNameHidden1").value = fileName;
+                
+                // Show file selected UI
+                showFileSelected1(fileName, file.size, mimeType);
+            };    
+            reader.readAsDataURL(file);
+        }
 
         function showFileSelected(fileName, fileSize, mimeType) {
             const fileSelectedDiv = document.getElementById('fileSelected');
@@ -1030,6 +1094,34 @@ input[type="range"]::-webkit-slider-thumb {
             document.getElementById('fileUploadSection').style.display = 'none';
         }
 
+        function showFileSelected1(fileName, fileSize, mimeType) {
+            const fileSelectedDiv = document.getElementById('fileSelected1');
+            const fileNameSpan = document.getElementById('fileName1');
+            const fileSizeSpan = document.getElementById('fileSize1');
+            const fileIcon = document.getElementById('fileIcon1');
+            
+            fileNameSpan.textContent = fileName;
+            fileSizeSpan.textContent = formatFileSize(fileSize);
+            
+            // Set appropriate icon based on file type
+            if (mimeType.startsWith('image/')) {
+                fileIcon.textContent = '🖼️';
+            } else if (mimeType.includes('pdf')) {
+                fileIcon.textContent = '📄';
+            } else if (mimeType.includes('word') || mimeType.includes('document')) {
+                fileIcon.textContent = '📝';
+            } else if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) {
+                fileIcon.textContent = '📊';
+            } else {
+                fileIcon.textContent = '📎';
+            }
+            
+            fileSelectedDiv.classList.add('show');
+            
+            // Hide the upload section
+            document.getElementById('fileUploadSection1').style.display = 'none';
+        }
+		
         function removeFile() {
             // Clear hidden inputs
             document.getElementById('fileData').value = '';
@@ -1045,7 +1137,23 @@ input[type="range"]::-webkit-slider-thumb {
             // Show upload section again
             document.getElementById('fileUploadSection').style.display = 'block';
         }
-
+		
+        function removeFile1() {
+            // Clear hidden inputs
+            document.getElementById('fileData1').value = '';
+            document.getElementById('mimeType1').value = '';
+            document.getElementById('fileNameHidden1').value = '';
+            
+            // Clear file input
+            document.getElementById('fileInput1').value = '';
+            
+            // Hide file selected UI
+            document.getElementById('fileSelected1').classList.remove('show');
+            
+            // Show upload section again
+            document.getElementById('fileUploadSection1').style.display = 'block';
+        }
+		
         function formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
