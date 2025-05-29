@@ -390,7 +390,7 @@
     <script>
         const API_KEY = 'AIzaSyByyiuwuJBysKl2xtvl6wCw6Gz9shyDzXs';
         const SHEET_ID = '1lKVyHbfdfPTfEUJbt870PtZZJ3rZxULl3VAf6I_9eIk';
-        const SHEET_RANGE = 'Tracker!A:AM';
+        const SHEET_RANGE = 'Tracker!A:AN';
 
         document.addEventListener('DOMContentLoaded', function() {
             const trackingInput = document.getElementById('trackingInput');
@@ -463,6 +463,7 @@
                         },
 						imageDetails: {
                             image: trackingData[38] || '',  
+							image1: trackingData[39] || '',  
                         },
                         itemDetails: {
                             description: trackingData[5] || '',
@@ -551,7 +552,7 @@
 					 console.log(details);
 						const container = document.getElementById('imageDetails');
 						container.innerHTML = Object.entries(details).map(([key, value]) => {
-							if (key === 'image') {
+							if (key === 'image' || key === 'image1' ) {
 								return `
 									<div class="details-row">
 										<div class="details-icon">${icons[key]}</div>
@@ -564,19 +565,7 @@
 									</div>
 								`;
 							}
-							else if (key === 'image1') {
-								return `
-									<div class="details-row">
-										<div class="details-icon">${icons[key]}</div>
-										<div class="details-content">
-											<div class="details-label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
-											<div class="details-value">
-												${value ? `<img src="https://drive.google.com/thumbnail?id=${value}&sz=w200-h200" alt="Customer Image" class="card-image" onerror="this.style.display='none'">` : '<span>No image available</span>'}
-											</div>
-										</div>
-									</div>
-								`;
-							}else {
+							else {
 								return `
 									<div class="details-row">
 										<div class="details-icon">${icons[key]}</div>
